@@ -8,7 +8,7 @@ import Noise from './components/Noise.jsx'
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Navbar/>
-    <div className='fixed inset-0 z-999'>
+    <div className='fixed inset-0 z-999 pointer-events-none'>
     <Noise
     patternSize={250}
     patternScaleX={2}

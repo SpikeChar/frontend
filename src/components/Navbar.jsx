@@ -17,7 +17,7 @@ const Navbar = () => {
                     <div className="logo cursor-pointer absolute top-0  left-1/2 -translate-x-1/2 size-16 rounded-full overflow-hidden">
                         <img className='w-full h-full bg-cover' src="/logo.jpeg" alt="" />
                     </div>
-                    <div className="btn cursor-pointer  rounded-full px-6 py-2 border border-white">Login</div>
+                    <div className="btn cursor-pointer  rounded-full px-6 py-2 border border-white font-semibold">LOGIN</div>
             </nav>
         </header>
     )
