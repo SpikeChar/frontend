@@ -12,13 +12,13 @@ const CustomCursor = () => {
 
       // Inner circle: instant
       gsap.set(innerRef.current, {
-        x: clientX - 6,
-        y: clientY - 6,
+        x: clientX - 8,
+        y: clientY - 8,
       });
 
       // Outer circle: smooth
       gsap.to(outerRef.current, {
-        duration: 0.2,
+        duration: 0.3,
         x: clientX - 16,
         y: clientY - 16,
         ease: "power2.out",
@@ -34,13 +34,13 @@ const CustomCursor = () => {
       {/* Outer Circle */}
       <div
         ref={outerRef}
-        className="fixed top-0 left-0 w-8 h-8 border border-white will-change-transform rounded-full z-[1000] pointer-events-none mix-blend-difference"
+        className="fixed top-0 left-0 w-5 h-5 border border-white will-change-transform rounded-full z-[1000] pointer-events-none mix-blend-difference"
       ></div>
 
       {/* Inner Circle */}
       <div
         ref={innerRef}
-        className="fixed top-0 left-0 w-3 h-3 bg-white rounded-full will-change-transform z-[1000] pointer-events-none mix-blend-difference"
+        className="fixed top-0 left-0 w-1 h-1 bg-white rounded-full will-change-transform z-[1000] pointer-events-none mix-blend-difference"
       ></div>
     </div>
   );
