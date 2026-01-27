@@ -73,7 +73,8 @@ const Hero: React.FC = () => {
          <div className="absolute inset-0 bg-gradient-to-t from-voxel-950 via-transparent to-voxel-950/20 z-10"></div>
          <video 
             autoPlay 
-            loop 
+            loop
+            muted 
             playsInline
             className="w-full h-full object-cover opacity-80"
          >
