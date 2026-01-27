@@ -18,7 +18,7 @@ const CustomCursor = () => {
 
       // Outer circle: smooth
       gsap.to(outerRef.current, {
-        duration: 0.3,
+        duration: 0.4,
         x: clientX - 16,
         y: clientY - 16,
         ease: "power2.out",

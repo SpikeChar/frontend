@@ -74,11 +74,10 @@ const Hero: React.FC = () => {
          <video 
             autoPlay 
             loop 
-            muted 
             playsInline
             className="w-full h-full object-cover opacity-80"
          >
-            <source src="/bg.mp4" type="video/mp4" />
+            <source src="/bg1.mp4" type="video/mp4" />
          </video>
       </div>
 
