@@ -3,12 +3,32 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SPIKE LABS | Modular Digital Assets</title>
+    
+    <title>SpikeLabs</title>
+    <meta name="title" content="SPIKE LABS | Modular NFT & Game Character Studio" />
+    <meta name="description" content="The ultimate spot for game developers. High-quality modular NFT and game character models with easy customization." />
+    <meta name="keywords" content="Spike Labs, Game Character Models, Modular NFT Assets, 3D Character Customization, Game Dev Assets" />
+    
+    <link rel="image_src" href="/google-thumbnail.png" />
+    <meta name="thumbnail" content="/google-thumbnail.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://spikelabs.io/" />
+    <meta property="og:title" content="SPIKE LABS | Build Your Hero" />
+    <meta property="og:description" content="Modular, customizable 3D models for the next generation of games." />
+    <meta property="og:image" content="/og-share-card.png" />
+
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:image" content="/og-share-card.png" />
+
+    <link rel="icon" type="image/png" href="/favicon.png" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://esm.sh/swiper@11.0.7/swiper-bundle.min.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <script>
       tailwind.config = {
         theme: {
@@ -19,17 +39,9 @@
             },
             colors: {
               voxel: {
-                50: '#f4f4f5',
-                100: '#e4e4e7',
-                200: '#d4d4d8',
-                300: '#a1a1aa',
-                400: '#71717a',
-                500: '#52525b',
-                600: '#3f3f46',
-                700: '#27272a',
-                800: '#18181b',
-                900: '#09090b', // Deep black/zinc
-                950: '#050505', // Almost black
+                50: '#f4f4f5', 100: '#e4e4e7', 200: '#d4d4d8', 300: '#a1a1aa',
+                400: '#71717a', 500: '#52525b', 600: '#3f3f46', 700: '#27272a',
+                800: '#18181b', 900: '#09090b', 950: '#050505', 
               }
             },
             backgroundImage: {
@@ -43,67 +55,23 @@
       }
     </script>
    <style>
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    /* Hide scrollbar for IE, Edge and Firefox */
-    .no-scrollbar {
-      -ms-overflow-style: none;  /* IE and Edge */
-      scrollbar-width: none;  /* Firefox */
-    }
-    
-    body {
-      cursor: default;
-    }
-    
-    /* Lenis recommended CSS */
-    html.lenis, html.lenis body {
-      height: auto;
-    }
-    .lenis.lenis-smooth {
-      scroll-behavior: auto !important;
-    }
-    .lenis.lenis-smooth [data-lenis-prevent] {
-      overscroll-behavior: contain;
-    }
-    .lenis.lenis-stopped {
-      overflow: hidden;
-    }
-    .lenis.lenis-scrolling iframe {
-      pointer-events: none;
-    }
-
-    /* Swiper Customization */
-    .swiper-pagination-bullet {
-      background: #52525b;
-      opacity: 0.5;
-    }
-    .swiper-pagination-bullet-active {
-      background: #ffffff;
-      opacity: 1;
-    }
-  /* Custom Scrollbar */
-  ::-webkit-scrollbar {
-    width: 12px;
-    background: #18181b;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #27272a;
-    border-radius: 6px;
-    border: 3px solid #18181b;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #3f3f46;
-  }
-  ::-webkit-scrollbar-corner {
-    background: #18181b;
-  }
-  html, body {
-    scrollbar-width: thin;
-    scrollbar-color: #27272a #18181b;
-  }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    body { cursor: default; }
+    html.lenis, html.lenis body { height: auto; }
+    .lenis.lenis-smooth { scroll-behavior: auto !important; }
+    .lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+    .lenis.lenis-stopped { overflow: hidden; }
+    .lenis.lenis-scrolling iframe { pointer-events: none; }
+    .swiper-pagination-bullet { background: #52525b; opacity: 0.5; }
+    .swiper-pagination-bullet-active { background: #ffffff; opacity: 1; }
+    ::-webkit-scrollbar { width: 12px; background: #18181b; }
+    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 6px; border: 3px solid #18181b; }
+    ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+    ::-webkit-scrollbar-corner { background: #18181b; }
+    html, body { scrollbar-width: thin; scrollbar-color: #27272a #18181b; }
   </style>
+
 <script type="importmap">
 {
 "imports": {
@@ -117,11 +85,7 @@
   "react-router-dom": "https://esm.sh/react-router-dom@6.22.3?external=react,react-dom",
   "swiper/react": "https://esm.sh/swiper@11.0.7/react?external=react,react-dom",
   "swiper/modules": "https://esm.sh/swiper@11.0.7/modules?external=swiper",
-  "swiper": "https://esm.sh/swiper@11.0.7",
-  "react-dom/": "https://esm.sh/react-dom@^19.2.4/",
-  "react/": "https://esm.sh/react@^19.2.4/",
-  "gsap/": "https://esm.sh/gsap@^3.14.2/",
-  "swiper/": "https://esm.sh/swiper@^12.0.3/"
+  "swiper": "https://esm.sh/swiper@11.0.7"
 }
 }
 </script>
