@@ -203,7 +203,7 @@ const Navbar: React.FC = () => {
                 ) : (
                     <Magnetic>
                         <Link to="/login" onMouseEnter={() => playSound('hover')} className="border border-white/20 px-5 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300 text-white">
-                        Login
+                        Connect Wallet
                         </Link>
                     </Magnetic>
                 )}
