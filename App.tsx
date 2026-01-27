@@ -13,6 +13,7 @@ import Contact from './components/Pages/Contact';
 import Workshop from './components/Pages/Workshop';
 import Login from './components/Pages/Login';
 import Workspace from './components/Pages/Workspace';
+import CustomCursor from './components/Layout/Cursor';
 
 const ScrollHandler = () => {
   const { pathname, hash } = useLocation();
@@ -43,6 +44,7 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
     return (
         <main className="bg-voxel-950 min-h-screen w-full overflow-hidden flex flex-col relative">
+          <CustomCursor/>
             <Navbar />
             <div className="flex-grow">
                 {children}
