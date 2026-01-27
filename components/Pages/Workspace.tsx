@@ -137,7 +137,7 @@ const Workspace: React.FC = () => {
         </div>
 
         {/* Middle: Config Panel */}
-        <div className="w-64 border-r border-voxel-800 bg-voxel-900/50 p-6 z-10 overflow-y-auto hidden md:block">
+        <div className="w-64 border-r border-voxel-800 bg-voxel-900/50 p-6 z-10 overflow-y-auto hidden md:block" data-lenis-prevent>
             <h3 className="workspace-ui font-mono text-xs uppercase text-voxel-500 mb-6 tracking-widest">
                 {activeTab} Settings
             </h3>

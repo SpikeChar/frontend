@@ -9,11 +9,7 @@ import { AuthProvider } from './components/Context/AuthContext';
 
 // Pages
 import Home from './components/Pages/Home';
-import About from './components/Pages/About';
-import Services from './components/Pages/Services';
-import Pricing from './components/Pages/Pricing';
 import Contact from './components/Pages/Contact';
-import Work from './components/Pages/Work';
 import Workshop from './components/Pages/Workshop';
 import Login from './components/Pages/Login';
 import Workspace from './components/Pages/Workspace';
@@ -43,15 +39,15 @@ const ScrollHandler = () => {
 // Layout wrapper to conditionally show Footer
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const location = useLocation();
-    const isWorkspace = location.pathname === '/workspace';
+    const hideFooter = location.pathname === '/workspace' || location.pathname === '/workshop';
 
     return (
-        <main className="bg-voxel-950 min-h-screen w-full overflow-hidden flex flex-col">
+        <main className="bg-voxel-950 min-h-screen w-full overflow-hidden flex flex-col relative">
             <Navbar />
             <div className="flex-grow">
                 {children}
             </div>
-            {!isWorkspace && <Footer />}
+            {!hideFooter && <Footer />}
         </main>
     );
 };
@@ -67,11 +63,7 @@ const App: React.FC = () => {
             <MainLayout>
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/pricing" element={<Pricing />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="/work" element={<Work />} />
                 <Route path="/workshop" element={<Workshop />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/workspace" element={<Workspace />} />

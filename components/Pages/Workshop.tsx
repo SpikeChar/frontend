@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import gsap from 'gsap';
-import { Play, Check, ChevronRight, Wand2, RefreshCw, Download, Share2, ArrowLeft, Zap, Hexagon, Component, Palette, Layout, Sun } from 'lucide-react';
+import { ChevronRight, Wand2, RefreshCw, Download, Share2, ArrowLeft, Hexagon, Layout, Palette } from 'lucide-react';
 import { useSettings } from '../Context/SettingsContext';
 import Magnetic from '../UI/Magnetic';
 
@@ -29,7 +29,7 @@ const QUESTIONS: Question[] = [
     options: [
       { label: 'Minimalist', value: 'minimal' },
       { label: 'Game-Ready', value: 'game' },
-      { label: 'Voxel Art', value: 'voxel' },
+      { label: 'Stylized', value: 'stylized' },
       { label: 'Hyper-Real', value: 'real' },
     ]
   },
@@ -57,17 +57,17 @@ const QUESTIONS: Question[] = [
     id: 'usecase',
     question: "Primary use case?",
     options: [
-      { label: 'NFT Collection', value: 'nft' },
-      { label: 'Web3 Gaming', value: 'game' },
-      { label: 'Metaverse Identity', value: 'meta' },
+      { label: 'Game Character', value: 'game' },
+      { label: 'VTuber Avatar', value: 'vtuber' },
       { label: 'Social Profile', value: 'social' },
+      { label: 'Digital Mascot', value: 'mascot' },
     ]
   }
 ];
 
 const Workshop: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { playSound, motionEnabled } = useSettings();
+  const { playSound } = useSettings();
   
   const [flowState, setFlowState] = useState<FlowState>('intro');
   const [currentQIndex, setCurrentQIndex] = useState(0);
@@ -176,7 +176,7 @@ const Workshop: React.FC = () => {
         AI SCENE BUILDER
       </h1>
       <p className="intro-anim text-xl text-voxel-400 max-w-2xl mb-12">
-        Answer 5 simple questions to generate a concept 3D character and environment optimized for the open metaverse.
+        Answer 5 simple questions to generate a concept 3D character and environment.
       </p>
       <div className="intro-anim">
         <Magnetic strength={50}>
@@ -306,9 +306,9 @@ const Workshop: React.FC = () => {
         </div>
 
         {/* Right: Controls */}
-        <div className="w-full md:w-1/3 h-[50vh] md:h-full bg-voxel-950 border-l border-voxel-800 p-8 overflow-y-auto">
+        <div className="w-full md:w-1/3 h-[50vh] md:h-full bg-voxel-950 border-l border-voxel-800 p-8 overflow-y-auto" data-lenis-prevent>
           <div className="editor-ui mb-8 flex justify-between items-center">
-            <h2 className="font-display text-2xl font-bold">REINEFORCEMENT</h2>
+            <h2 className="font-display text-2xl font-bold">CONFIGURATION</h2>
             <button 
               onClick={() => setFlowState('intro')}
               className="p-2 hover:bg-voxel-900 rounded-full text-voxel-400 transition-colors"

@@ -1,63 +1,78 @@
 import React, { useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Twitter, Instagram, Github, Disc } from 'lucide-react';
+import { Twitter, Instagram, Github } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const Footer: React.FC = () => {
   const footerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.from(footerRef.current, {
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: 'top 90%',
-        },
-        y: 50,
-        opacity: 0,
-        duration: 1,
-        ease: 'power2.out'
-      });
+      // Use fromTo to ensure consistent starting state
+      gsap.fromTo(footerRef.current, 
+        { y: 50, opacity: 0 },
+        {
+          scrollTrigger: {
+            trigger: footerRef.current,
+            start: 'top bottom', // Start animating when top of footer hits bottom of viewport
+            end: 'bottom bottom',
+            toggleActions: 'play none none reverse'
+          },
+          y: 0,
+          opacity: 1,
+          duration: 1,
+          ease: 'power2.out'
+        }
+      );
     }, footerRef);
     return () => ctx.revert();
   }, []);
 
+  const handleLink = (hash: string) => {
+    navigate('/');
+    setTimeout(() => {
+        const el = document.querySelector(hash);
+        el?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
+  };
+
   return (
-    <footer ref={footerRef} className="bg-voxel-950 border-t border-voxel-800 pt-20 pb-10 px-6">
+    <footer ref={footerRef} className="bg-voxel-950 border-t border-voxel-800 pt-20 pb-10 px-6 opacity-0">
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
           <div className="col-span-1 md:col-span-1">
-            <Link to="/" className="font-display font-bold text-2xl tracking-tight block mb-6">SPIKE LABS</Link>
+            <Link to="/" className="font-display font-bold text-2xl tracking-tight block mb-6 text-white">VOXEL</Link>
             <p className="text-voxel-400 text-sm leading-relaxed max-w-xs">
-              Premium modular digital assets for the next generation of spatial experiences. Built for performance, designed for impact.
+              Premium 3D character infrastructure for the next generation of games and virtual experiences.
             </p>
           </div>
 
           <div>
-            <h4 className="font-mono text-xs uppercase text-voxel-500 tracking-widest mb-6">Explore</h4>
+            <h4 className="font-mono text-xs uppercase text-voxel-500 tracking-widest mb-6">Platform</h4>
             <ul className="space-y-4 text-sm font-medium text-voxel-300">
-              <li><Link to="/about" className="hover:text-white transition-colors">About Studio</Link></li>
-              <li><Link to="/work" className="hover:text-white transition-colors">Selected Work</Link></li>
-              <li><Link to="/services" className="hover:text-white transition-colors">Services</Link></li>
-              <li><Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+              <li><button onClick={() => handleLink('#about')} className="hover:text-white transition-colors">About</button></li>
+              <li><button onClick={() => handleLink('#specs')} className="hover:text-white transition-colors">Specifications</button></li>
+              <li><button onClick={() => handleLink('#services')} className="hover:text-white transition-colors">Services</button></li>
+              <li><button onClick={() => handleLink('#pricing')} className="hover:text-white transition-colors">Pricing</button></li>
             </ul>
           </div>
 
           <div>
-             <h4 className="font-mono text-xs uppercase text-voxel-500 tracking-widest mb-6">Resources</h4>
+             <h4 className="font-mono text-xs uppercase text-voxel-500 tracking-widest mb-6">Support</h4>
              <ul className="space-y-4 text-sm font-medium text-voxel-300">
-               <li><Link to="/workshop" className="hover:text-white transition-colors">Workshop</Link></li>
+               <li><button onClick={() => handleLink('#process')} className="hover:text-white transition-colors">Process</button></li>
                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
                <li><a href="#" className="hover:text-white transition-colors">License</a></li>
-               <li><a href="#" className="hover:text-white transition-colors">Support</a></li>
+               <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
              </ul>
           </div>
 
           <div>
-            <h4 className="font-mono text-xs uppercase text-voxel-500 tracking-widest mb-6">Connect</h4>
+            <h4 className="font-mono text-xs uppercase text-voxel-500 tracking-widest mb-6">Social</h4>
             <div className="flex gap-4 mb-6">
                 <a href="#" className="w-10 h-10 rounded-full border border-voxel-800 flex items-center justify-center text-voxel-400 hover:text-white hover:bg-voxel-800 transition-all">
                     <Twitter size={16} />
@@ -69,17 +84,14 @@ const Footer: React.FC = () => {
                     <Github size={16} />
                 </a>
             </div>
-            <Link to="/contact" className="text-sm border-b border-voxel-700 pb-1 hover:border-white hover:text-white transition-all text-voxel-400 inline-block">
-                Start a project
-            </Link>
           </div>
         </div>
 
         <div className="pt-8 border-t border-voxel-900 flex flex-col md:flex-row justify-between items-center text-xs text-voxel-600 font-mono uppercase tracking-wider">
-            <p>© 2026 Spike Labs. All rights reserved.</p>
+            <p>© 2024 Voxel Studios. All rights reserved.</p>
             <div className="flex gap-8 mt-4 md:mt-0">
-                <a href="#" className="hover:text-voxel-400">Privacy Policy</a>
-                <a href="#" className="hover:text-voxel-400">Terms of Service</a>
+                <a href="#" className="hover:text-voxel-400">Privacy</a>
+                <a href="#" className="hover:text-voxel-400">Terms</a>
             </div>
         </div>
       </div>

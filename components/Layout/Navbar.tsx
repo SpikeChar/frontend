@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import gsap from 'gsap';
-import { Menu, X, Settings, Volume2, VolumeX, Zap, ZapOff, UserCircle, LogOut } from 'lucide-react';
+import { Menu, X, Settings, Volume2, VolumeX, Zap, ZapOff, UserCircle, LogOut, ArrowRight } from 'lucide-react';
 import Magnetic from '../UI/Magnetic';
 import { useSettings } from '../Context/SettingsContext';
 import { useAuth } from '../Context/AuthContext';
@@ -19,9 +19,6 @@ const Navbar: React.FC = () => {
   const { soundEnabled, toggleSound, motionEnabled, toggleMotion, playSound } = useSettings();
   const { isLoggedIn, logout, user } = useAuth();
 
-  // Hide Navbar on Workspace to allow full app experience (or keep it minimal)
-  // We will keep it but maybe simplify? For now, we reuse the same navbar.
-
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.from(navRef.current, {
@@ -35,7 +32,16 @@ const Navbar: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  // Mobile Menu Animation
+  // Workspace Link Animation
+  useEffect(() => {
+    if (isLoggedIn) {
+        gsap.fromTo('.workspace-link', 
+            { opacity: 0, x: -10 },
+            { opacity: 1, x: 0, duration: 0.5, delay: 0.2, ease: 'power2.out' }
+        );
+    }
+  }, [isLoggedIn]);
+
   useEffect(() => {
     if (isMobileMenuOpen) {
       gsap.to(mobileMenuRef.current, { x: '0%', duration: 0.5, ease: 'power3.out' });
@@ -44,7 +50,6 @@ const Navbar: React.FC = () => {
     }
   }, [isMobileMenuOpen]);
 
-  // Settings Menu Animation
   useEffect(() => {
     if (isSettingsOpen) {
       gsap.to(settingsMenuRef.current, { y: 0, opacity: 1, duration: 0.4, ease: 'back.out(1.2)' });
@@ -53,25 +58,37 @@ const Navbar: React.FC = () => {
     }
   }, [isSettingsOpen]);
 
-  const handleNavClick = (path: string, hash?: string) => {
+  const handleNavClick = (path: string, hash?: string, to?: string) => {
     setIsMobileMenuOpen(false);
     playSound('click');
+   
+    // If 'to' is provided and it's a full path (not a hash), navigate directly
+    if (to && !to.startsWith('#')) {
+        navigate(to);
+        return;
+    }
     
     if (path === '/') {
         if (location.pathname !== '/') {
+            // Not on home page, navigate to home with hash
             navigate('/' + (hash || ''));
+        }
+        else if (hash && location.hash !== hash) {
+            // On home page but different hash, navigate to hash
+            navigate(hash);
+        }
+        else if (hash) {
+            // On home page with same hash, scroll to element
+            const element = document.querySelector(hash);
+            element?.scrollIntoView({ behavior: 'smooth' });
         } else {
-             if (hash) {
-                const element = document.querySelector(hash);
-                element?.scrollIntoView({ behavior: 'smooth' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
+            // No hash, scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     } else {
         navigate(path);
     }
-  };
+};
 
   const handleLogout = () => {
     logout();
@@ -79,13 +96,12 @@ const Navbar: React.FC = () => {
     navigate('/');
   };
 
-  const NavLink = ({ to, label, hash }: { to: string, label: string, hash?: string }) => {
-    const isActive = location.pathname === to && !hash;
+  const NavLink = ({ label, hash, to }: { label: string, hash?: string , to?: string }) => {
     return (
         <Magnetic>
             <button 
-                onClick={() => handleNavClick(to, hash)} 
-                className={`text-sm font-medium uppercase tracking-wider transition-colors duration-300 px-2 py-1 ${isActive ? 'text-white' : 'text-neutral-400 hover:text-white'}`}
+                onClick={() => handleNavClick('/', hash,to)} 
+                className={`text-sm font-medium uppercase tracking-wider transition-colors duration-300 px-2 py-1 text-voxel-400 hover:text-white`}
             >
                 {label}
             </button>
@@ -97,43 +113,46 @@ const Navbar: React.FC = () => {
     <>
         <nav 
         ref={navRef}
-        className="fixed top-0 left-1/2 -translate-x-1/2 max-w-7xl w-full z-50 px-6 py-6 mix-blend-difference text-white flex justify-between items-center pointer-events-none"
+        className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center border-b border-white/5 bg-voxel-950/80 backdrop-blur-md"
         >
-            <div className="pointer-events-auto z-50">
+<div className="w-full max-w-7xl mx-auto flex justify-between items-center">
+<div className="flex items-center gap-8">
                 <Magnetic>
-                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} onMouseEnter={() => playSound('hover')} className="font-display font-bold text-xl tracking-tight inline-block">SPIKE LABS</Link>
+                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} onMouseEnter={() => playSound('hover')} className="font-display font-bold text-xl tracking-tight inline-block text-white">SPIKE LABS</Link>
                 </Magnetic>
+
+                {/* Desktop Menu */}
+                <div className="hidden md:flex gap-6 items-center  ">
+                    <NavLink label="About" hash="#about" />
+                    <NavLink label="Specs" hash="#specs"/>
+                    <NavLink label="Services" hash="#services" />
+                    <NavLink label="Pricing" hash="#pricing" />
+                    <NavLink label="Contacts"  to='/contact' />
+                </div>
             </div>
 
-            {/* Desktop Menu */}
-            <div className="pointer-events-auto hidden md:flex gap-6 items-center">
-                <NavLink to="/" label="Builder" hash="#builder" />
-                <NavLink to="/" label="Specs" hash="#technology" />
-                <NavLink to="/about" label="About" />
-                
-                {/* Authenticated Links */}
-                {isLoggedIn && (
-                    <div className="flex items-center ml-4">
+            <div className="hidden md:flex gap-4 items-center relative">
+                 {/* Workspace Link (Auth Only) */}
+                 {isLoggedIn && (
+                    <div className="workspace-link flex items-center mr-4">
                         <Magnetic>
                             <button 
                                 onClick={() => handleNavClick('/workspace')}
-                                className="text-sm font-bold uppercase tracking-wider text-green-400 hover:text-green-300 transition-colors px-2 py-1 flex items-center gap-2"
+                                className="text-sm font-bold uppercase tracking-wider text-green-400 hover:text-green-300 transition-colors px-2 py-1 flex items-center gap-2 border border-green-500/20 rounded bg-green-500/5"
                             >
                                 <Zap size={14} />
-                                Workspace
+                                Workshop
                             </button>
                         </Magnetic>
                     </div>
                 )}
-            </div>
 
-            <div className="pointer-events-auto hidden md:flex gap-4 items-center relative">
                  {/* Settings Toggle */}
-                <div className="relative">
+                <div className="relative z-50">
                     <Magnetic>
                         <button 
                             onClick={() => { setIsSettingsOpen(!isSettingsOpen); playSound('click'); }}
-                            className="w-10 h-10 flex items-center justify-center text-white/70 hover:text-white hover:rotate-90 transition-all duration-500"
+                            className="w-10 h-10 flex items-center justify-center text-voxel-400 hover:text-white hover:rotate-90 transition-all duration-500"
                         >
                             <Settings size={18} />
                         </button>
@@ -142,7 +161,7 @@ const Navbar: React.FC = () => {
                     {/* Settings Dropdown */}
                     <div 
                         ref={settingsMenuRef}
-                        className="absolute top-12 right-0 w-48 bg-voxel-900 border border-voxel-800 p-4 rounded shadow-2xl origin-top-right opacity-0 -translate-y-4 pointer-events-auto"
+                        className="absolute top-12 right-0 w-48 bg-voxel-900 border border-voxel-800 p-4 rounded shadow-2xl origin-top-right opacity-0 -translate-y-4"
                         style={{ display: isSettingsOpen || settingsMenuRef.current?.style.opacity !== '0' ? 'block' : 'none' }}
                     >
                          <div className="space-y-4">
@@ -166,7 +185,7 @@ const Navbar: React.FC = () => {
                 {isLoggedIn ? (
                     <div className="flex items-center gap-4">
                         <Magnetic>
-                            <div className="w-10 h-10 rounded-full bg-voxel-800 border border-voxel-700 flex items-center justify-center text-voxel-300" title={user?.wallet}>
+                            <div className="w-10 h-10 rounded-full bg-voxel-800 border border-voxel-700 flex items-center justify-center text-voxel-300" title={user?.name}>
                                 <UserCircle size={20} />
                             </div>
                         </Magnetic>
@@ -176,7 +195,7 @@ const Navbar: React.FC = () => {
                     </div>
                 ) : (
                     <Magnetic>
-                        <Link to="/login" onMouseEnter={() => playSound('hover')} className="border border-white/20 px-5 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+                        <Link to="/login" onMouseEnter={() => playSound('hover')} className="border border-white/20 px-5 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300 text-white">
                         Login
                         </Link>
                     </Magnetic>
@@ -184,7 +203,7 @@ const Navbar: React.FC = () => {
             </div>
 
             {/* Mobile Menu Toggle */}
-            <div className="pointer-events-auto md:hidden z-50 flex gap-4">
+            <div className="md:hidden z-50 flex gap-4">
                 <button 
                   onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); playSound('click'); }} 
                   className="text-white"
@@ -192,6 +211,7 @@ const Navbar: React.FC = () => {
                     {isMobileMenuOpen ? <X /> : <Menu />}
                 </button>
             </div>
+</div>
         </nav>
 
         {/* Mobile Menu Overlay */}
@@ -199,13 +219,15 @@ const Navbar: React.FC = () => {
             ref={mobileMenuRef}
             className="fixed inset-0 bg-voxel-950 z-40 flex flex-col justify-center items-center gap-8 translate-x-full md:hidden"
         >
-            <button onClick={() => handleNavClick('/', '#builder')} className="text-2xl font-display font-bold">Builder Preview</button>
-            <button onClick={() => handleNavClick('/', '#technology')} className="text-2xl font-display font-bold">Specs</button>
-            <button onClick={() => handleNavClick('/about')} className="text-2xl font-display font-bold">About</button>
+            <button onClick={() => handleNavClick('/', '#about')} className="text-2xl font-display font-bold text-white">About</button>
+            <button onClick={() => handleNavClick('/', '#specs')} className="text-2xl font-display font-bold text-white">Specs</button>
+            <button onClick={() => handleNavClick('/', '#services')} className="text-2xl font-display font-bold text-white">Services</button>
+            <button onClick={() => handleNavClick('/', '#pricing')} className="text-2xl font-display font-bold text-white">Pricing</button>
+            <button onClick={() => handleNavClick('/contact')} className="text-2xl font-display font-bold text-white">Contact</button>
             
             {isLoggedIn && (
-                <button onClick={() => handleNavClick('/workspace')} className="text-2xl font-display font-bold text-green-500">
-                    Open Workspace
+                <button onClick={() => handleNavClick('/workspace')} className="text-2xl font-display font-bold text-green-500 mt-4 flex items-center gap-2">
+                    Open Workshop <ArrowRight size={20} />
                 </button>
             )}
 
