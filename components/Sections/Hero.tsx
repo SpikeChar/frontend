@@ -77,7 +77,7 @@ const Hero: React.FC = () => {
             playsInline
             className="w-full h-full object-cover opacity-80"
          >
-            <source src="/bg1.mp4" type="video/mp4" />
+            <source src="https://res.cloudinary.com/dgvb4ap8o/video/upload/v1769538179/Untitled_design_pt4xzk.mp4" type="video/mp4" />
          </video>
       </div>
 
@@ -85,7 +85,7 @@ const Hero: React.FC = () => {
       <div ref={textRef} className="relative z-20 text-center flex flex-col items-center max-w-5xl px-6">
         <div className="overflow-hidden mb-6">
             <span className="hero-line inline-block py-1 px-3 border border-white/20 rounded-full bg-white/5 backdrop-blur-sm font-mono text-xs text-voxel-200 uppercase tracking-widest">
-              Voxel Studio Suite 2.0
+              SPIKELABS Suite 2.0
             </span>
         </div>
         
