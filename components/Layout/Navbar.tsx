@@ -118,7 +118,7 @@ const Navbar: React.FC = () => {
 <div className="w-full max-w-7xl mx-auto flex justify-between items-center">
 <div className="flex items-center gap-8">
                 <Magnetic>
-                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} onMouseEnter={() => playSound('hover')} className="font-display font-bold text-xl tracking-tight flex items-center gap-3 text-white">
+                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} onMouseEnter={() => playSound('hover')} className="font-display font-bold text-xl tracking-tight flex items-center gap-0 text-white">
                     <img
                         src="/nobg_logo.png"
                         alt="spike logo"
