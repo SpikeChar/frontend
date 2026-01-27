@@ -54,7 +54,7 @@ const TransitionOverlay: React.FC = () => {
       className="fixed inset-0 z-[100] bg-voxel-950 flex items-center justify-center pointer-events-none"
     >
         <div ref={textRef} className="flex flex-col items-center">
-            <span className="font-display font-bold text-4xl text-white tracking-tight">VOXEL</span>
+            <span className="font-display font-bold text-4xl text-white tracking-tight">SPIKE LABS</span>
             <span className="font-mono text-xs text-voxel-500 uppercase tracking-[0.3em] mt-2">Loading System...</span>
         </div>
     </div>
