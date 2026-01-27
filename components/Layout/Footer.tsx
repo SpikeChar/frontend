@@ -45,7 +45,7 @@ const Footer: React.FC = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
           <div className="col-span-1 md:col-span-1">
-            <Link to="/" className="font-display font-bold text-2xl tracking-tight block mb-6 text-white">VOXEL</Link>
+            <Link to="/" className="font-display font-bold text-2xl tracking-tight block mb-6 text-white">SPIKE LABS</Link>
             <p className="text-voxel-400 text-sm leading-relaxed max-w-xs">
               Premium 3D character infrastructure for the next generation of games and virtual experiences.
             </p>
