@@ -1,0 +1,234 @@
+import React, { useEffect, useRef, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
+import { Menu, X, Settings, Volume2, VolumeX, Zap, ZapOff, UserCircle, LogOut } from 'lucide-react';
+import Magnetic from '../UI/Magnetic';
+import { useSettings } from '../Context/SettingsContext';
+import { useAuth } from '../Context/AuthContext';
+
+const Navbar: React.FC = () => {
+  const navRef = useRef<HTMLElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const settingsMenuRef = useRef<HTMLDivElement>(null);
+  
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { soundEnabled, toggleSound, motionEnabled, toggleMotion, playSound } = useSettings();
+  const { isLoggedIn, logout, user } = useAuth();
+
+  // Hide Navbar on Workspace to allow full app experience (or keep it minimal)
+  // We will keep it but maybe simplify? For now, we reuse the same navbar.
+
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      gsap.from(navRef.current, {
+        y: -100,
+        opacity: 0,
+        duration: 1.2,
+        ease: 'power3.out',
+        delay: 0.5
+      });
+    });
+    return () => ctx.revert();
+  }, []);
+
+  // Mobile Menu Animation
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      gsap.to(mobileMenuRef.current, { x: '0%', duration: 0.5, ease: 'power3.out' });
+    } else {
+      gsap.to(mobileMenuRef.current, { x: '100%', duration: 0.5, ease: 'power3.in' });
+    }
+  }, [isMobileMenuOpen]);
+
+  // Settings Menu Animation
+  useEffect(() => {
+    if (isSettingsOpen) {
+      gsap.to(settingsMenuRef.current, { y: 0, opacity: 1, duration: 0.4, ease: 'back.out(1.2)' });
+    } else {
+      gsap.to(settingsMenuRef.current, { y: -20, opacity: 0, duration: 0.3, ease: 'power2.in' });
+    }
+  }, [isSettingsOpen]);
+
+  const handleNavClick = (path: string, hash?: string) => {
+    setIsMobileMenuOpen(false);
+    playSound('click');
+    
+    if (path === '/') {
+        if (location.pathname !== '/') {
+            navigate('/' + (hash || ''));
+        } else {
+             if (hash) {
+                const element = document.querySelector(hash);
+                element?.scrollIntoView({ behavior: 'smooth' });
+            } else {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+    } else {
+        navigate(path);
+    }
+  };
+
+  const handleLogout = () => {
+    logout();
+    setIsMobileMenuOpen(false);
+    navigate('/');
+  };
+
+  const NavLink = ({ to, label, hash }: { to: string, label: string, hash?: string }) => {
+    const isActive = location.pathname === to && !hash;
+    return (
+        <Magnetic>
+            <button 
+                onClick={() => handleNavClick(to, hash)} 
+                className={`text-sm font-medium uppercase tracking-wider transition-colors duration-300 px-2 py-1 ${isActive ? 'text-white' : 'text-neutral-400 hover:text-white'}`}
+            >
+                {label}
+            </button>
+        </Magnetic>
+    );
+  };
+
+  return (
+    <>
+        <nav 
+        ref={navRef}
+        className="fixed top-0 left-1/2 -translate-x-1/2 max-w-7xl w-full z-50 px-6 py-6 mix-blend-difference text-white flex justify-between items-center pointer-events-none"
+        >
+            <div className="pointer-events-auto z-50">
+                <Magnetic>
+                    <Link to="/" onClick={() => setIsMobileMenuOpen(false)} onMouseEnter={() => playSound('hover')} className="font-display font-bold text-xl tracking-tight inline-block">SPIKE LABS</Link>
+                </Magnetic>
+            </div>
+
+            {/* Desktop Menu */}
+            <div className="pointer-events-auto hidden md:flex gap-6 items-center">
+                <NavLink to="/" label="Builder" hash="#builder" />
+                <NavLink to="/" label="Specs" hash="#technology" />
+                <NavLink to="/about" label="About" />
+                
+                {/* Authenticated Links */}
+                {isLoggedIn && (
+                    <div className="flex items-center ml-4">
+                        <Magnetic>
+                            <button 
+                                onClick={() => handleNavClick('/workspace')}
+                                className="text-sm font-bold uppercase tracking-wider text-green-400 hover:text-green-300 transition-colors px-2 py-1 flex items-center gap-2"
+                            >
+                                <Zap size={14} />
+                                Workspace
+                            </button>
+                        </Magnetic>
+                    </div>
+                )}
+            </div>
+
+            <div className="pointer-events-auto hidden md:flex gap-4 items-center relative">
+                 {/* Settings Toggle */}
+                <div className="relative">
+                    <Magnetic>
+                        <button 
+                            onClick={() => { setIsSettingsOpen(!isSettingsOpen); playSound('click'); }}
+                            className="w-10 h-10 flex items-center justify-center text-white/70 hover:text-white hover:rotate-90 transition-all duration-500"
+                        >
+                            <Settings size={18} />
+                        </button>
+                    </Magnetic>
+                    
+                    {/* Settings Dropdown */}
+                    <div 
+                        ref={settingsMenuRef}
+                        className="absolute top-12 right-0 w-48 bg-voxel-900 border border-voxel-800 p-4 rounded shadow-2xl origin-top-right opacity-0 -translate-y-4 pointer-events-auto"
+                        style={{ display: isSettingsOpen || settingsMenuRef.current?.style.opacity !== '0' ? 'block' : 'none' }}
+                    >
+                         <div className="space-y-4">
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs font-mono uppercase text-voxel-400">Sound</span>
+                                <button onClick={toggleSound} className="text-white hover:text-voxel-300">
+                                    {soundEnabled ? <Volume2 size={16} /> : <VolumeX size={16} />}
+                                </button>
+                            </div>
+                            <div className="w-full h-px bg-voxel-800"></div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-xs font-mono uppercase text-voxel-400">Motion</span>
+                                <button onClick={toggleMotion} className="text-white hover:text-voxel-300">
+                                    {motionEnabled ? <Zap size={16} /> : <ZapOff size={16} />}
+                                </button>
+                            </div>
+                         </div>
+                    </div>
+                </div>
+
+                {isLoggedIn ? (
+                    <div className="flex items-center gap-4">
+                        <Magnetic>
+                            <div className="w-10 h-10 rounded-full bg-voxel-800 border border-voxel-700 flex items-center justify-center text-voxel-300" title={user?.wallet}>
+                                <UserCircle size={20} />
+                            </div>
+                        </Magnetic>
+                        <button onClick={handleLogout} className="text-xs font-bold uppercase tracking-widest text-voxel-400 hover:text-white transition-colors">
+                            Logout
+                        </button>
+                    </div>
+                ) : (
+                    <Magnetic>
+                        <Link to="/login" onMouseEnter={() => playSound('hover')} className="border border-white/20 px-5 py-2 text-xs font-bold uppercase tracking-widest hover:bg-white hover:text-black transition-all duration-300">
+                        Login
+                        </Link>
+                    </Magnetic>
+                )}
+            </div>
+
+            {/* Mobile Menu Toggle */}
+            <div className="pointer-events-auto md:hidden z-50 flex gap-4">
+                <button 
+                  onClick={() => { setIsMobileMenuOpen(!isMobileMenuOpen); playSound('click'); }} 
+                  className="text-white"
+                >
+                    {isMobileMenuOpen ? <X /> : <Menu />}
+                </button>
+            </div>
+        </nav>
+
+        {/* Mobile Menu Overlay */}
+        <div 
+            ref={mobileMenuRef}
+            className="fixed inset-0 bg-voxel-950 z-40 flex flex-col justify-center items-center gap-8 translate-x-full md:hidden"
+        >
+            <button onClick={() => handleNavClick('/', '#builder')} className="text-2xl font-display font-bold">Builder Preview</button>
+            <button onClick={() => handleNavClick('/', '#technology')} className="text-2xl font-display font-bold">Specs</button>
+            <button onClick={() => handleNavClick('/about')} className="text-2xl font-display font-bold">About</button>
+            
+            {isLoggedIn && (
+                <button onClick={() => handleNavClick('/workspace')} className="text-2xl font-display font-bold text-green-500">
+                    Open Workspace
+                </button>
+            )}
+
+            {/* Mobile Settings */}
+            <div className="flex gap-8 mt-8 border-t border-voxel-800 pt-8">
+                 <button onClick={toggleSound} className="flex flex-col items-center gap-2 text-voxel-400">
+                    {soundEnabled ? <Volume2 size={24} /> : <VolumeX size={24} />}
+                    <span className="text-[10px] uppercase tracking-widest">Sound</span>
+                </button>
+                <button onClick={toggleMotion} className="flex flex-col items-center gap-2 text-voxel-400">
+                    {motionEnabled ? <Zap size={24} /> : <ZapOff size={24} />}
+                    <span className="text-[10px] uppercase tracking-widest">Motion</span>
+                </button>
+            </div>
+
+            {isLoggedIn ? (
+                 <button onClick={handleLogout} className="text-xl font-display font-bold text-voxel-500 mt-4">Log Out</button>
+            ) : (
+                 <button onClick={() => handleNavClick('/login')} className="text-2xl font-display font-bold text-white mt-4 border border-white/20 px-8 py-3">Login</button>
+            )}
+        </div>
+    </>
+  );
+};
+
+export default Navbar;
