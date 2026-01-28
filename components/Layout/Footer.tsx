@@ -88,7 +88,7 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="pt-8 border-t border-voxel-900 flex flex-col md:flex-row justify-between items-center text-xs text-voxel-600 font-mono uppercase tracking-wider">
-            <p>© 2024 Voxel Studios. All rights reserved.</p>
+            <p>© 2025 SPIKELABS. All rights reserved.</p>
             <div className="flex gap-8 mt-4 md:mt-0">
                 <a href="#" className="hover:text-voxel-400">Privacy</a>
                 <a href="#" className="hover:text-voxel-400">Terms</a>
