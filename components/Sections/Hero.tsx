@@ -94,7 +94,7 @@ const Hero: React.FC = () => {
             ref={videoElementRef}
             autoPlay 
             loop
-            muted // Default to muted for initial autoplay compliance
+            muted 
             playsInline
             className="w-full h-full object-cover opacity-80"
          >
