@@ -6,7 +6,6 @@ import SmoothScroll from './components/Layout/SmoothScroll';
 import TransitionOverlay from './components/UI/TransitionOverlay';
 import { SettingsProvider } from './components/Context/SettingsContext';
 import { AuthProvider } from './components/Context/AuthContext';
-// Import your new Web3Provider
 import { Web3Provider } from './components/Context/Web3Provider'; 
 
 // Pages
@@ -53,7 +52,6 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const App: React.FC = () => {
   return (
-    /* 1. Web3Provider must be at the top level */
     <Web3Provider>
       <AuthProvider>
         <SettingsProvider>

@@ -5,8 +5,6 @@ import { Menu, X, Settings, Volume2, VolumeX, Zap, ZapOff, UserCircle, ArrowRigh
 import Magnetic from '../UI/Magnetic';
 import { useSettings } from '../Context/SettingsContext';
 import { useAuth } from '../Context/AuthContext';
-
-// 1. Import AppKit Hooks
 import { useAppKit, useAppKitAccount, useDisconnect } from '@reown/appkit/react';
 
 const Navbar: React.FC = () => {
@@ -26,7 +24,6 @@ const Navbar: React.FC = () => {
   const { address, isConnected } = useAppKitAccount();
   const { disconnect } = useDisconnect();
   
-  // Use wallet connection as the source of truth for login
   const isLoggedIn = isConnected;
 
   useEffect(() => {
@@ -42,7 +39,6 @@ const Navbar: React.FC = () => {
     return () => ctx.revert();
   }, []);
 
-  // Workspace Link Animation
   useEffect(() => {
     if (isLoggedIn) {
         gsap.fromTo('.workspace-link', 
@@ -180,7 +176,6 @@ const Navbar: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* 3. WalletConnect UI */}
                     {isLoggedIn ? (
                         <div className="flex items-center gap-4">
                             <Magnetic>

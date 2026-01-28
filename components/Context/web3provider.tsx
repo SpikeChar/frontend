@@ -1,4 +1,3 @@
-// src/components/Web3Provider.tsx
 import { createAppKit } from '@reown/appkit/react'
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi'
 import { mainnet, arbitrum, polygon } from '@reown/appkit/networks'
@@ -18,7 +17,7 @@ const wagmiAdapter = new WagmiAdapter({
 const metadata = {
   name: 'Spike Labs',
   description: 'AI Workplace for Game Devs',
-  url: 'https://spikelabs.vercel.app', // Must match your domain
+  url: 'https://spikelabs.vercel.app',
   icons: ['https://spikelabs.vercel.app/google-thumbnail.png']
 }
 
@@ -28,11 +27,11 @@ createAppKit({
   metadata,
   projectId,
   features: {
-    analytics: true // Optional
+    analytics: true 
   },
-  themeMode: 'dark' // Matches your UI
+  themeMode: 'dark' 
 })
-
+//
 const queryClient = new QueryClient()
 
 export function Web3Provider({ children }: { children: React.ReactNode }) {
