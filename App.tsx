@@ -6,6 +6,8 @@ import SmoothScroll from './components/Layout/SmoothScroll';
 import TransitionOverlay from './components/UI/TransitionOverlay';
 import { SettingsProvider } from './components/Context/SettingsContext';
 import { AuthProvider } from './components/Context/AuthContext';
+// Import your new Web3Provider
+import { Web3Provider } from './components/Context/Web3Provider'; 
 
 // Pages
 import Home from './components/Pages/Home';
@@ -19,9 +21,7 @@ const ScrollHandler = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
-    // If there is a hash, try to scroll to it
     if (hash) {
-      // Use a small timeout to ensure DOM is ready after route transition
       const timer = setTimeout(() => {
         const element = document.querySelector(hash);
         if (element) {
@@ -30,14 +30,11 @@ const ScrollHandler = () => {
       }, 100);
       return () => clearTimeout(timer);
     } 
-    // Handled by TransitionOverlay for standard routes if motion enabled, 
-    // but good fallback if disabled or if transition doesn't handle scroll reset instantly
   }, [pathname, hash]);
 
   return null;
 };
 
-// Layout wrapper to conditionally show Footer
 const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const location = useLocation();
     const hideFooter = location.pathname === '/workspace' || location.pathname === '/workshop';
@@ -56,25 +53,28 @@ const MainLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 
 const App: React.FC = () => {
   return (
-    <AuthProvider>
-      <SettingsProvider>
-        <Router>
-          <SmoothScroll>
-            <TransitionOverlay />
-            <ScrollHandler />
-            <MainLayout>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/workshop" element={<Workshop />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/workspace" element={<Workspace />} />
-              </Routes>
-            </MainLayout>
-          </SmoothScroll>
-        </Router>
-      </SettingsProvider>
-    </AuthProvider>
+    /* 1. Web3Provider must be at the top level */
+    <Web3Provider>
+      <AuthProvider>
+        <SettingsProvider>
+          <Router>
+            <SmoothScroll>
+              <TransitionOverlay />
+              <ScrollHandler />
+              <MainLayout>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/contact" element={<Contact />} />
+                  <Route path="/workshop" element={<Workshop />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/workspace" element={<Workspace />} />
+                </Routes>
+              </MainLayout>
+            </SmoothScroll>
+          </Router>
+        </SettingsProvider>
+      </AuthProvider>
+    </Web3Provider>
   );
 };
 
