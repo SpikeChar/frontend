@@ -9,9 +9,28 @@ gsap.registerPlugin(ScrollTrigger);
 const Hero: React.FC = () => {
   const containerRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLDivElement>(null);
-  const videoRef = useRef<HTMLDivElement>(null);
-  const { motionEnabled } = useSettings();
+  const videoWrapperRef = useRef<HTMLDivElement>(null);
+  const videoElementRef = useRef<HTMLVideoElement>(null);
+  
+  // Destructure settings from context
+  const { motionEnabled, soundEnabled } = useSettings();
 
+  // Handle Sound Logic: Sync global sound state with video element
+  useEffect(() => {
+    if (videoElementRef.current) {
+      // The 'muted' property is what controls the actual audio output
+      videoElementRef.current.muted = !soundEnabled;
+      
+      // If sound is turned on, ensure the video is playing (browsers sometimes pause on mute toggle)
+      if (soundEnabled) {
+        videoElementRef.current.play().catch((error) => {
+          console.log("Autoplay with sound interaction requirement:", error);
+        });
+      }
+    }
+  }, [soundEnabled]);
+
+  // Handle GSAP Animations
   useEffect(() => {
     if (!motionEnabled) return;
 
@@ -19,7 +38,7 @@ const Hero: React.FC = () => {
       // Intro Animation (Load)
       const tl = gsap.timeline();
 
-      tl.from(videoRef.current, {
+      tl.from(videoWrapperRef.current, {
         scale: 1.1,
         opacity: 1,
         duration: 1.5,
@@ -34,16 +53,16 @@ const Hero: React.FC = () => {
       }, "-=1.0");
 
       // Scroll Animation (Parallax)
-      if (containerRef.current && videoRef.current && textRef.current) {
-        gsap.to(videoRef.current, {
+      if (containerRef.current && videoWrapperRef.current && textRef.current) {
+        gsap.to(videoWrapperRef.current, {
           scrollTrigger: {
             trigger: containerRef.current,
             start: 'top top',
             end: 'bottom top',
             scrub: true,
           },
-          y: 200, // Background moves slower
-          scale: 1.1, // Slight zoom out/in effect
+          y: 200, 
+          scale: 1.1, 
           opacity: 0.3
         });
 
@@ -54,7 +73,7 @@ const Hero: React.FC = () => {
             end: 'bottom center',
             scrub: true,
           },
-          y: -200, // Text moves up faster than background
+          y: -200,
           opacity: 0
         });
       }
@@ -68,13 +87,14 @@ const Hero: React.FC = () => {
     <section ref={containerRef} className="relative h-screen w-full flex items-center justify-center overflow-hidden bg-voxel-950">
       
       {/* Video Background */}
-      <div ref={videoRef} className="absolute inset-0 z-0 scale-105">
+      <div ref={videoWrapperRef} className="absolute inset-0 z-0 scale-105">
          <div className="absolute inset-0 bg-voxel-950/50 z-10"></div>
          <div className="absolute inset-0 bg-gradient-to-t from-voxel-950 via-transparent to-voxel-950/20 z-10"></div>
          <video 
+            ref={videoElementRef}
             autoPlay 
             loop
-            muted 
+            muted // Default to muted for initial autoplay compliance
             playsInline
             className="w-full h-full object-cover opacity-80"
          >
