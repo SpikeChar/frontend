@@ -6,7 +6,7 @@ import SmoothScroll from './components/Layout/SmoothScroll';
 import TransitionOverlay from './components/UI/TransitionOverlay';
 import { SettingsProvider } from './components/Context/SettingsContext';
 import { AuthProvider } from './components/Context/AuthContext';
-import { Web3Provider } from './components/Context/Web3Provider'; 
+import { Web3Provider } from './components/Context/Web3'; 
 
 // Pages
 import Home from './components/Pages/Home';
