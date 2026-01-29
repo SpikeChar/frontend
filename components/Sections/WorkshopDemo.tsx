@@ -5,6 +5,7 @@ import { ChevronRight, RefreshCw, Hexagon, Palette, Component } from 'lucide-rea
 import { Link } from 'react-router-dom';
 import { useSettings } from '../Context/SettingsContext';
 import * as THREE from 'three';
+import { Ape } from '../Model/Ape';
 
 // --- 3D MODEL COMPONENT ---
 const ApeModel = ({ colors }: { colors: any }) => {
@@ -99,7 +100,7 @@ const WorkshopDemo: React.FC = () => {
                         <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 45 }}>
                             <Suspense fallback={null}>
                                 <Stage intensity={0.6} environment="city" adjustCamera>
-                                    <ApeModel colors={config} />
+                                    <Ape config={config} />
                                 </Stage>
                                 <OrbitControls makeDefault enableZoom={true} />
                             </Suspense>
