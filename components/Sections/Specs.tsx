@@ -46,7 +46,7 @@ const Specs: React.FC = () => {
                         <h2 className="font-display text-4xl font-bold">SPECIFICATIONS</h2>
                     </div>
                     <div className="mt-4 md:mt-0 text-voxel-400 font-mono text-xs uppercase">
-                        Voxel Engine v2.4
+                        Spkie Labs v2.4
                     </div>
                 </div>
 

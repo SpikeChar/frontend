@@ -23,6 +23,7 @@
     "react-router-dom": "6.22.3",
     "swiper": "^12.0.3",
     "three": "^0.182.0",
+    "three-stdlib": "^2.36.1",
     "viem": "^2.45.0",
     "wagmi": "^3.4.1"
   },

@@ -50,7 +50,7 @@ const BentoAbout: React.FC = () => {
   clickEffect
   spotlightRadius={400}
   particleCount={12}
-  glowColor="104, 211, 145"
+  glowColor="24, 24, 27"
   disableAnimations={false}
 />
             </div>

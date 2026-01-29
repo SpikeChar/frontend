@@ -2,36 +2,10 @@ import React, { useState, useRef, Suspense, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { useGLTF, Stage, OrbitControls, ContactShadows, Environment, Center, Grid } from '@react-three/drei';
 import { Download, RotateCcw, Box, Palette, Layout, Zap, Maximize2 } from 'lucide-react';
+import { Ape } from '../Model/Ape';
+import { Ape1 } from '../Model/Ape1';
+import { Ape2 } from '../Model/Ap2';
 
-const ApeModel = ({ colors }: { colors: any }) => {
-  const { scene } = useGLTF('/ape.glb');
-
-  useEffect(() => {
-    scene.traverse((child: any) => {
-      if (child.isMesh && child.material) {
-        if (!child.userData.isCloned) {
-          child.material = child.material.clone();
-          child.userData.isCloned = true;
-        }
-        
-        const name = (child.name + child.material.name).toLowerCase();
-        
-        if (name.includes('body') || name.includes('skin') || name.includes('ape')) {
-          child.material.color.set(colors.body);
-        }
-        if (name.includes('goggle') || name.includes('glass') || name.includes('eye')) {
-          child.material.color.set(colors.goggles);
-        }
-        if (name.includes('shirt') || name.includes('outfit') || name.includes('armor')) {
-          child.material.color.set(colors.outfit);
-        }
-        child.material.needsUpdate = true;
-      }
-    });
-  }, [colors, scene]);
-
-  return <primitive object={scene} />;
-};
 
 const Workshop: React.FC = () => {
   const [config, setConfig] = useState({
@@ -45,25 +19,26 @@ const Workshop: React.FC = () => {
       
       {/* 3D VIEWPORT */}
       <div className="absolute inset-0 z-0 top-16">
-        <Suspense fallback={null}>
-          <Canvas shadows dpr={[1, 2]} camera={{ position: [5, 2, 5], fov: 35 }}>
+        {/* <Suspense> */}
+          <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 5], fov: 30 }}>
             <color attach="background" args={['#050505']} />
-            
-            <Stage intensity={0.5} environment="city" adjustCamera={true} shadowBias={-0.0001}>
-              <Center top>
-                <ApeModel colors={config} />
+            <Environment preset="studio" />
+    <ambientLight intesity={0.3}/>
+            {/* <Stage intensity={1} environment="studio"> */}
+              <Center >
+                <Ape config={config} />
               </Center>
-            </Stage>
+            {/* </Stage> */}
 
             <Grid
               renderOrder={-1}
-              position={[0, -1.21, 0]}
+              position={[0, -0.7, 0]}
               infiniteGrid
               cellSize={0.6}
               cellThickness={1}
               cellColor={'#27272a'}
-              sectionSize={3}
-              sectionThickness={1.5}
+              sectionSize={2}
+              sectionThickness={1}
               sectionColor={'#3f3f46'}
               fadeDistance={30}
             />
@@ -72,7 +47,11 @@ const Workshop: React.FC = () => {
               makeDefault 
               enablePan={false}
               minDistance={3}
-              maxDistance={12}
+              maxDistance={5}
+              maxAzimuthAngle={Math.PI}
+              minAzimuthAngle={-Math.PI}
+              maxPolarAngle={Math.PI / 2}
+              minPolarAngle={0}
               enableDamping={true}
               dampingFactor={0.04}
               rotateSpeed={0.8}
@@ -86,11 +65,11 @@ const Workshop: React.FC = () => {
               far={4.5} 
             />
           </Canvas>
-        </Suspense>
+        {/* </Suspense> */}
       </div>
 
       {/* RIGHT SIDEBAR HUD - Adjusted for better scaling */}
-      <div className="absolute top-20 right-6 bottom-8 w-72 bg-black/40 backdrop-blur-xl border border-white/10 p-6 flex flex-col rounded-[2rem] shadow-2xl z-10 max-h-[calc(100vh-120px)]">
+      <div className="absolute top-32 right-6 bottom-8 w-72 bg-black/40 backdrop-blur-xl border border-white/10 p-6 flex flex-col rounded-[2rem] shadow-2xl z-10 max-h-[calc(100vh-120px)]">
         <div className="flex justify-between items-center mb-6 shrink-0">
             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-600 font-bold">DNA Config</span>
             <button 
@@ -109,7 +88,7 @@ const Workshop: React.FC = () => {
                 <Palette size={12} className="text-zinc-500" />
                 <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-[0.2em]">Surface</label>
             </div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-2 p-2">
               {['#ffffff', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#18181b', '#71717a', '#3f3f46'].map(c => (
                 <button 
                   key={c} 
@@ -127,7 +106,7 @@ const Workshop: React.FC = () => {
                 <Zap size={12} className="text-zinc-500" />
                 <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-[0.2em]">Optical</label>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 p-2">
               {['#ffffff', '#3b82f6', '#ef4444', '#18181b'].map(c => (
                 <button 
                   key={c} 
@@ -145,7 +124,7 @@ const Workshop: React.FC = () => {
                 <Box size={12} className="text-zinc-500" />
                 <label className="text-[9px] font-mono uppercase text-zinc-500 tracking-[0.2em]">Equipment</label>
             </div>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 p-2 gap-2">
               {['#ffffff', '#18181b', '#3b82f6', '#ef4444'].map(c => (
                 <button 
                   key={c} 

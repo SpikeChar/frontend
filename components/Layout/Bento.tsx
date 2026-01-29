@@ -492,7 +492,7 @@ const BentoCardGrid: React.FC<{
   gridRef?: React.RefObject<HTMLDivElement | null>;
 }> = ({ children, gridRef }) => (
   <div
-    className="bento-section grid gap-2 w-[200%] select-none relative"
+    className="bento-section flex gap-2 w-full select-none relative"
     style={{ fontSize: 'clamp(1rem, 0.9rem + 0.5vw, 1.5rem)' }}
     ref={gridRef}
   >
@@ -542,7 +542,7 @@ const MagicBento: React.FC<BentoProps> = ({
             --glow-intensity: 0;
             --glow-radius: 200px;
             --glow-color: ${glowColor};
-            --border-color:rgba(104, 211, 145, 0.27);
+            --border-color: #18181b);
             --background-dark: #0;
             --white: hsl(0, 0%, 100%);
             --purple-primary: #0a0a0a;
@@ -552,9 +552,7 @@ const MagicBento: React.FC<BentoProps> = ({
           
           .card-responsive {
             grid-template-columns: 1fr;
-            width: 90%;
-            margin: 0 auto;
-            padding: 0.5rem;
+            width: 100%;
           }
           
           @media (min-width: 600px) {
@@ -649,9 +647,7 @@ const MagicBento: React.FC<BentoProps> = ({
           @media (max-width: 599px) {
             .card-responsive {
               grid-template-columns: 1fr;
-              width: 90%;
-              margin: 0 auto;
-              padding: 0.5rem;
+              width: 100%;
             }
             
             .card-responsive .card {
@@ -681,7 +677,7 @@ const MagicBento: React.FC<BentoProps> = ({
 
             const cardStyle = {
               backgroundColor: card.color || 'var(--background-dark)',
-              borderColor: 'var(--border-color)',
+              borderColor: '#18181b',
               color: 'var(--white)',
               '--glow-x': '50%',
               '--glow-y': '50%',

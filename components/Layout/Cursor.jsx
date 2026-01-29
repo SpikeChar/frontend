@@ -12,15 +12,15 @@ const CustomCursor = () => {
 
       // Inner circle: instant
       gsap.set(innerRef.current, {
-        x: clientX - 8,
-        y: clientY - 8,
+        x: clientX ,
+        y: clientY,
       });
 
       // Outer circle: smooth
       gsap.to(outerRef.current, {
         duration: 0.3,
-        x: clientX - 16,
-        y: clientY - 16,
+        x: clientX - 8,
+        y: clientY - 8,
         ease: "power2.out",
       });
     };

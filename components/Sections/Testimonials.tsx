@@ -29,7 +29,7 @@ const Testimonials: React.FC = () => {
     }, [motionEnabled]);
 
     const reviews = [
-        { text: "Voxel Studios drastically reduced our character pipeline time. The assets are clean, optimized, and ready for Unity.", author: "Alex Chen", role: "Art Director, PolyArc" },
+        { text: "Spike Labs drastically reduced our character pipeline time. The assets are clean, optimized, and ready for Unity.", author: "Alex Chen", role: "Art Director, PolyArc" },
         { text: "The modularity is incredible. We built 50 unique NPCs in a single afternoon.", author: "Sarah Jenkins", role: "Indie Developer" },
         { text: "Finally, a character creator that respects topology. No mess, just good quads.", author: "Marcus V.", role: "3D Generalist" },
     ];
