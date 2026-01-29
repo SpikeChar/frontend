@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { Canvas, useThree } from '@react-three/fiber';
-import { useGLTF, Stage, OrbitControls, ContactShadows, Environment, Center, Grid } from '@react-three/drei';
+import { useGLTF, Stage, OrbitControls, ContactShadows, Environment, Center, Grid, Stats } from '@react-three/drei';
 import { Download, RotateCcw, Box, Palette, Zap, Maximize2 } from 'lucide-react';
 import { Ape } from '../Model/Ape';
 // import { Ape1 } from '../Model/Ape1';
@@ -87,6 +87,7 @@ const Workshop: React.FC = () => {
       <div className="absolute inset-0 z-0 top-16">
         <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 5], fov: 30 }}>
           <color attach="background" args={['#050505']} />
+          {/* <Stats/> */}
           <Environment preset="studio" />
           <ambientLight intensity={0.3} />
           <Center>
@@ -213,7 +214,7 @@ const Workshop: React.FC = () => {
             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400">Stable</span>
           </div>
-          <Maximize2 size={12} className="text-zinc-700 hover:text-white cursor-pointer transition-colors" />
+          {/* <Maximize2 size={12} className="text-zinc-700 hover:text-white cursor-pointer transition-colors" /> */}
         </div>
       </div>
     </div>
