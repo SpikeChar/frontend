@@ -44,7 +44,7 @@ const GLTFWithCustomizableParts = memo(
             if (onCollectParts) onCollectParts(Array.from(new Set(names)));
         }, [scene, config, onCollectParts]);
         if (!scene) return null;
-        return <primitive object={scene} scale={1} ref={refGroup} />;
+        return <primitive object={scene} scale={1} position-y={-1} ref={refGroup} />;
     }
 );
 
@@ -123,13 +123,13 @@ const WorkshopDemo: React.FC = () => {
                 <div className="w-full lg:w-2/3 bg-voxel-900 rounded-xl border border-voxel-800 p-2 shadow-2xl h-[600px] flex flex-col md:flex-row overflow-hidden">
 
                     {/* Viewport */}
-                    <div className="relative flex-grow h-[350px] md:h-full bg-voxel-950">
+                    <div className="relative flex-grow h-[350px] md:h-full bg-voxel-950 cursor-grab">
                         <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 5], fov: 30 }}>
                             <color attach="background" args={['#050505']} />
                             <Environment preset="studio" />
                             <ambientLight intensity={0.4} />
- 
-                            <Center>
+
+                            {/* <Center> */}
                                 <group>
                                     <GLTFWithCustomizableParts
                                         scene={scene}
@@ -138,10 +138,10 @@ const WorkshopDemo: React.FC = () => {
                                         refGroup={apeRef}
                                     />
                                 </group>
-                            </Center>
+                            {/* </Center> */}
                             <Grid
                                 renderOrder={-1}
-                                position={[0, -0.8, 0]}
+                                position={[0, -1, 0]}
                                 infiniteGrid
                                 cellSize={0.6}
                                 cellThickness={1}
@@ -200,19 +200,19 @@ const WorkshopDemo: React.FC = () => {
                                                 {part}
                                             </label>
                                         </div>
-                                        <div className="flex flex-wrap gap-2">
-                                            {/* {DEFAULT_PART_COLORS.map((color) => (
-                    <button
-                      key={color}
-                      onClick={() => setSelection(part, color)}
-                      className={`w-8 h-8 rounded-lg border-2 transition-all ${config[part] === color
-                        ? 'border-white scale-110'
-                        : 'border-white/5 opacity-40 hover:opacity-100'
-                      }`}
-                      style={{ backgroundColor: color }}
-                    />
-                  ))} */}
                                             {isActive && (
+                                        <div className="flex flex-wrap gap-2">
+                                            {DEFAULT_PART_COLORS.map((color) => (
+                                                <button
+                                                    key={color}
+                                                    onClick={() => setSelection(part, color)}
+                                                    className={`w-8 h-8 rounded-lg border-2 transition-all ${config[part] === color
+                                                        ? 'border-white scale-110'
+                                                        : 'border-white/5 opacity-40 hover:opacity-100'
+                                                        }`}
+                                                    style={{ backgroundColor: color }}
+                                                />
+                                            ))}
                                                 <div className="mt-3 w-full flex items-center">
                                                     {/* Color wheel (using input type color for simplicity) */}
                                                     <input
@@ -226,8 +226,8 @@ const WorkshopDemo: React.FC = () => {
                                                         Pick Color
                                                     </span>
                                                 </div>
-                                            )}
                                         </div>
+                                            )}
                                     </section>
                                 )
                             })}

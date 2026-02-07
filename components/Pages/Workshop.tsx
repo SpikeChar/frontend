@@ -80,7 +80,7 @@ const GLTFWithCustomizableParts = memo(
       if (onCollectParts) onCollectParts(Array.from(new Set(names)));
     }, [scene, config, onCollectParts]);
     if (!scene) return null;
-    return <primitive object={scene} scale={0.5} ref={refGroup} />;
+    return <primitive object={scene} ref={refGroup} />;
   }
 );
 
@@ -89,7 +89,7 @@ GLTFWithCustomizableParts.displayName = "GLTFWithCustomizableParts";
 const DEFAULT_PART_COLORS = ['#ffffff', '#3b82f6', '#ef4444', '#18181b', '#10b981', '#f59e0b', '#71717a', '#3f3f46'];
 
 const Workshop: React.FC = () => {
-  const { scene } = useGLTF("/models/animal2.glb");
+  const { scene } = useGLTF("/models/Character2.glb");
   const [availableParts, setAvailableParts] = useState<string[]>([]);
   const [config, setConfig] = useState<Record<string, string>>({});
   const [activePart, setActivePart] = useState<string | undefined>();
@@ -137,13 +137,13 @@ const Workshop: React.FC = () => {
   return (
     <div className="relative w-full h-screen bg-[#050505] overflow-hidden flex flex-col pt-16 ">
       {/* 3D VIEWPORT */}
-      <div className="absolute inset-0 z-0 top-16">
-        <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 5], fov: 30 }}>
+      <div className="absolute inset-0 z-0 top-16 cursor-grab">
+        <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 3], fov: 50 }}>
           <color attach="background" args={['#050505']} />
           <Environment preset="studio" />
           <ambientLight intensity={0.4} />
-          <Center>
-            <group>
+          {/* <Center> */}
+            <group position={[0,-1,0]}>
               <GLTFWithCustomizableParts
                 scene={scene}
                 config={config}
@@ -151,10 +151,10 @@ const Workshop: React.FC = () => {
                 refGroup={apeRef}
               />
             </group>
-          </Center>
+          {/* </Center> */}
           <Grid
             renderOrder={-1}
-            position={[0, -0.8, 0]}
+            position={[0, -1, 0]}
             infiniteGrid
             cellSize={0.6}
             cellThickness={1}
@@ -174,7 +174,7 @@ const Workshop: React.FC = () => {
             dampingFactor={0.05}
           />
 
-          <ContactShadows position={[0, -1.2, 0]} opacity={0.6} scale={20} blur={2.8} far={4.5} />
+          {/* <ContactShadows position={[0, -1.2, 0]} opacity={0.6} scale={20} blur={2.8} far={4.5} /> */}
         </Canvas>
       </div>
 
@@ -209,8 +209,9 @@ const Workshop: React.FC = () => {
                     {part}
                   </label>
                 </div>
+                  {isActive && (
                 <div className="flex flex-wrap gap-2">
-                  {/* {DEFAULT_PART_COLORS.map((color) => (
+                  {DEFAULT_PART_COLORS.map((color) => (
                     <button
                       key={color}
                       onClick={() => setSelection(part, color)}
@@ -220,8 +221,7 @@ const Workshop: React.FC = () => {
                       }`}
                       style={{ backgroundColor: color }}
                     />
-                  ))} */}
-                  {isActive && (
+                  ))}
                     <div className="mt-3 w-full flex items-center">
                       {/* Color wheel (using input type color for simplicity) */}
                       <input
@@ -235,8 +235,8 @@ const Workshop: React.FC = () => {
                         Pick Color
                       </span>
                     </div>
-                  )}
                 </div>
+              )}
               </section>
             )
           })}
