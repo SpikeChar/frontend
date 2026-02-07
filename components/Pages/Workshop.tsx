@@ -1,45 +1,11 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useRef, useCallback, memo } from 'react';
 import { Canvas, useThree, useFrame } from '@react-three/fiber';
-import { useGLTF, Stage, OrbitControls, ContactShadows, Environment, Center, Grid, Stats } from '@react-three/drei';
-import { Download, RotateCcw, Box, Palette, Zap, Maximize2 } from 'lucide-react';
-import { easing } from 'maath';
+import { useGLTF, OrbitControls, ContactShadows, Environment, Center, Grid } from '@react-three/drei';
+import { Download, RotateCcw, Box } from 'lucide-react';
+// import { easing } from 'maath';
 import * as THREE from 'three';
-import { Ape } from '../Model/Ape';
-
-// Add GLTFExporter - must be installed via three/examples/jsm
 import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter';
 
-/**
- * CAMERA RIG COMPONENT
- * Handles smooth zooming and target focusing based on activePart
- */
-const CameraRig = ({ activePart }: { activePart: string }) => {
-  const { camera, controls } = useThree();
-  
-  // High-precision camera targets for each mesh group
-  const targets = {
-    body: { pos: new THREE.Vector3(0, 0, 4.5), lookAt: new THREE.Vector3(0, 0, 0) },
-    goggles: { pos: new THREE.Vector3(0, 0.4, 1.4), lookAt: new THREE.Vector3(0, 0.4, 0) },
-    outfit: { pos: new THREE.Vector3(0, -0.3, 2.2), lookAt: new THREE.Vector3(0, -0.3, 0) },
-  };
-
-  useFrame((state, delta) => {
-    const target = targets[activePart as keyof typeof targets] || targets.body;
-    
-    // Smooth damp camera position
-    easing.damp3(state.camera.position, target.pos, 0.3, delta);
-    
-    // Smooth damp orbit controls target (where the camera looks)
-    if (controls) {
-      // @ts-ignore
-      easing.damp3(controls.target, target.lookAt, 0.3, delta);
-      // @ts-ignore
-      controls.update();
-    }
-  });
-
-  return null;
-};
 
 const ExportButton: React.FC<{ glbRef: React.RefObject<any>; children?: React.ReactNode }> = ({ glbRef, children }) => {
   const handleExport = useCallback(() => {
@@ -48,16 +14,21 @@ const ExportButton: React.FC<{ glbRef: React.RefObject<any>; children?: React.Re
     if ('scene' in scene) scene = scene.scene;
 
     const exporter = new GLTFExporter();
-    exporter.parse(scene, (gltf: any) => {
-      const blob = gltf instanceof ArrayBuffer 
-        ? new Blob([gltf], { type: 'model/gltf-binary' }) 
-        : new Blob([JSON.stringify(gltf)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'SpikeLabs_Asset.glb';
-      link.click();
-    }, { binary: true, embedImages: true });
+    exporter.parse(
+      scene,
+      (gltf: any) => {
+        const blob =
+          gltf instanceof ArrayBuffer
+            ? new Blob([gltf], { type: 'model/gltf-binary' })
+            : new Blob([JSON.stringify(gltf)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'SpikeLabs_Asset.glb';
+        link.click();
+      },
+      { binary: true, embedImages: true }
+    );
   }, [glbRef]);
 
   return (
@@ -71,40 +42,116 @@ const ExportButton: React.FC<{ glbRef: React.RefObject<any>; children?: React.Re
   );
 };
 
-const ApeWithRef = React.forwardRef<any, { config: any }>((props, ref) => (
-  <group ref={ref}>
-    <Ape {...props} />
-  </group>
-));
-ApeWithRef.displayName = "ApeWithRef";
+const GLTFWithCustomizableParts = memo(
+  ({
+    scene,
+    config,
+    onCollectParts,
+    refGroup,
+  }: {
+    scene: THREE.Group;
+    config: Record<string, string>;
+    onCollectParts?: (names: string[]) => void;
+    refGroup?: React.RefObject<THREE.Group>;
+  }) => {
+    useEffect(() => {
+      if (!scene) return;
+      const names: string[] = [];
+
+      // Traverse and apply color
+      scene.traverse((obj) => {
+        // @ts-ignore
+        if (obj.isMesh) {
+          names.push(obj.name);
+          // update mesh color if given in config
+          if (
+            config &&
+            Object.prototype.hasOwnProperty.call(config, obj.name) &&
+            obj.material &&
+            obj.material.color
+          ) {
+            // @ts-ignore
+            obj.material.color.set(config[obj.name]);
+            // Ensure material updates in real time
+            obj.material.needsUpdate = true;
+          }
+        }
+      });
+      if (onCollectParts) onCollectParts(Array.from(new Set(names)));
+    }, [scene, config, onCollectParts]);
+    if (!scene) return null;
+    return <primitive object={scene} scale={0.5} ref={refGroup} />;
+  }
+);
+
+GLTFWithCustomizableParts.displayName = "GLTFWithCustomizableParts";
+
+const DEFAULT_PART_COLORS = ['#ffffff', '#3b82f6', '#ef4444', '#18181b', '#10b981', '#f59e0b', '#71717a', '#3f3f46'];
 
 const Workshop: React.FC = () => {
-  const [config, setConfig] = useState({ body: '#ffffff', goggles: '#ffffff', outfit: '#18181b' });
-  const [activePart, setActivePart] = useState('body');
+  const { scene } = useGLTF("/models/animal2.glb");
+  const [availableParts, setAvailableParts] = useState<string[]>([]);
+  const [config, setConfig] = useState<Record<string, string>>({});
+  const [activePart, setActivePart] = useState<string | undefined>();
   const apeRef = useRef<any>(null);
 
-  // Helper to handle color change and camera focus simultaneously
+  useEffect(() => {
+    if (!scene) return;
+    const partNames: Set<string> = new Set();
+    const initial: Record<string, string> = { ...(config || {}) };
+    scene.traverse((obj) => {
+      // @ts-ignore
+      if (obj.isMesh) {
+        partNames.add(obj.name);
+        if (!(obj.name in initial) && obj.material && obj.material.color) {
+          // @ts-ignore
+          initial[obj.name] = '#' + obj.material.color.getHexString();
+        }
+      }
+    });
+    setAvailableParts(Array.from(partNames));
+    setConfig((prev) => {
+      // Merge previous config (user changes) and initial config
+      return { ...initial, ...prev };
+    });
+    // Default active part
+    setActivePart((prev) => prev ?? Array.from(partNames)[0]);
+    // eslint-disable-next-line
+  }, [scene]);
+
+  // Color change
   const setSelection = (part: string, color?: string) => {
     setActivePart(part);
-    if (color) setConfig(prev => ({ ...prev, [part]: color }));
+    if (color)
+      setConfig((prev) => ({
+        ...prev,
+        [part]: color,
+      }));
   };
 
+  const handleReset = () => {
+    setConfig({});
+  };
+
+
   return (
-    <div className="relative w-full h-screen bg-[#050505] overflow-hidden flex flex-col pt-16">
-      
+    <div className="relative w-full h-screen bg-[#050505] overflow-hidden flex flex-col pt-16 ">
       {/* 3D VIEWPORT */}
       <div className="absolute inset-0 z-0 top-16">
         <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 5], fov: 30 }}>
           <color attach="background" args={['#050505']} />
           <Environment preset="studio" />
           <ambientLight intensity={0.4} />
-          
-          <CameraRig activePart={activePart} />
-          
           <Center>
-            <ApeWithRef config={config} ref={apeRef} />
+            <group>
+              <GLTFWithCustomizableParts
+                scene={scene}
+                config={config}
+                onCollectParts={setAvailableParts}
+                refGroup={apeRef}
+              />
+            </group>
           </Center>
-
           <Grid
             renderOrder={-1}
             position={[0, -0.8, 0]}
@@ -118,8 +165,8 @@ const Workshop: React.FC = () => {
             fadeDistance={30}
           />
 
-          <OrbitControls 
-            makeDefault 
+          <OrbitControls
+            makeDefault
             enablePan={false}
             minDistance={1}
             maxDistance={8}
@@ -134,74 +181,72 @@ const Workshop: React.FC = () => {
       {/* RIGHT SIDEBAR HUD */}
       <div className="absolute top-32 right-6 bottom-8 w-72 bg-black/40 backdrop-blur-xl border border-white/10 p-6 flex flex-col rounded-[2rem] shadow-2xl z-10">
         <div className="flex justify-between items-center mb-6 shrink-0">
-          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-600 font-bold">DNA Config</span>
-          <button 
-            onClick={() => { setConfig({body:'#ffffff', goggles:'#ffffff', outfit:'#18181b'}); setActivePart('body'); }} 
+          <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-600 font-bold">
+            DNA Config
+          </span>
+          <button
+            onClick={handleReset}
             className="p-1.5 hover:bg-white/5 rounded-full transition-colors group"
           >
             <RotateCcw size={12} className="text-zinc-600 group-hover:text-white transition-all duration-500" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto no-scrollbar space-y-8 pr-1">
-          {/* SKIN TONE */}
-          <section onPointerDown={() => setActivePart('body')} className={`p-2 rounded-xl transition-colors ${activePart === 'body' ? 'bg-white/5' : ''}`}>
-            <div className="flex items-center gap-2 mb-4">
-              <Palette size={12} className={activePart === 'body' ? "text-white" : "text-zinc-500"} />
-              <label className={`text-[9px] font-mono uppercase tracking-[0.2em] ${activePart === 'body' ? "text-white" : "text-zinc-500"}`}>Surface</label>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {['#ffffff', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#18181b', '#71717a', '#3f3f46'].map(c => (
-                <button 
-                  key={c} 
-                  onClick={() => setSelection('body', c)} 
-                  className={`aspect-square rounded-full border-2 transition-all ${config.body === c ? 'border-white scale-110' : 'border-transparent opacity-40 hover:opacity-100'}`} 
-                  style={{ backgroundColor: c }} 
-                />
-              ))}
-            </div>
-          </section>
-
-          {/* GOGGLE TINT */}
-          <section onPointerDown={() => setActivePart('goggles')} className={`p-2 rounded-xl transition-colors ${activePart === 'goggles' ? 'bg-white/5' : ''}`}>
-            <div className="flex items-center gap-2 mb-4">
-              <Zap size={12} className={activePart === 'goggles' ? "text-white" : "text-zinc-500"} />
-              <label className={`text-[9px] font-mono uppercase tracking-[0.2em] ${activePart === 'goggles' ? "text-white" : "text-zinc-500"}`}>Optical</label>
-            </div>
-            <div className="flex gap-2">
-              {['#ffffff', '#3b82f6', '#ef4444', '#18181b'].map(c => (
-                <button 
-                  key={c} 
-                  onClick={() => setSelection('goggles', c)} 
-                  className={`w-8 h-8 rounded-lg border-2 transition-all ${config.goggles === c ? 'border-white scale-110' : 'border-white/5 opacity-40'}`} 
-                  style={{ backgroundColor: c }} 
-                />
-              ))}
-            </div>
-          </section>
-
-          {/* APPAREL */}
-          <section onPointerDown={() => setActivePart('outfit')} className={`p-2 rounded-xl transition-colors ${activePart === 'outfit' ? 'bg-white/5' : ''}`}>
-            <div className="flex items-center gap-2 mb-4">
-              <Box size={12} className={activePart === 'outfit' ? "text-white" : "text-zinc-500"} />
-              <label className={`text-[9px] font-mono uppercase tracking-[0.2em] ${activePart === 'outfit' ? "text-white" : "text-zinc-500"}`}>Equipment</label>
-            </div>
-            <div className="grid grid-cols-4 gap-2">
-              {['#ffffff', '#18181b', '#3b82f6', '#ef4444'].map(c => (
-                <button 
-                  key={c} 
-                  onClick={() => setSelection('outfit', c)} 
-                  className={`aspect-square rounded-md border-2 transition-all ${config.outfit === c ? 'border-white scale-110' : 'border-transparent opacity-40'}`} 
-                  style={{ backgroundColor: c }} 
-                />
-              ))}
-            </div>
-          </section>
+        <div className="flex-1 overflow-y-auto space-y-8 pr-1">
+          {availableParts.map((part) => {
+            const isActive = activePart === part;
+            return (
+              <section
+                key={part}
+                onPointerDown={() => setActivePart(part)}
+                className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-white/5' : ''}`}
+              >
+                <div className="flex items-center gap-2 mb-4 cursor-pointer">
+                  <Box size={12} className={isActive ? 'text-white' : 'text-zinc-500'} />
+                  <label
+                    className={`text-[9px] font-mono uppercase tracking-[0.2em] cursor-pointer ${isActive ? 'text-white' : 'text-zinc-500'}`}
+                  >
+                    {part}
+                  </label>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {/* {DEFAULT_PART_COLORS.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelection(part, color)}
+                      className={`w-8 h-8 rounded-lg border-2 transition-all ${config[part] === color
+                        ? 'border-white scale-110'
+                        : 'border-white/5 opacity-40 hover:opacity-100'
+                      }`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))} */}
+                  {isActive && (
+                    <div className="mt-3 w-full flex items-center">
+                      {/* Color wheel (using input type color for simplicity) */}
+                      <input
+                        type="color"
+                        value={config[part] || "#ffffff"}
+                        onChange={(e) => setSelection(part, e.target.value)}
+                        className="w-12 h-12 p-0 border-0 bg-transparent cursor-pointer"
+                        aria-label="Custom color picker"
+                      />
+                      <span className="ml-2 text-xs text-zinc-400 font-mono uppercase">
+                        Pick Color
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )
+          })}
         </div>
 
         <div className="mt-6 pt-4 border-t border-white/5 shrink-0">
           <ExportButton glbRef={apeRef} />
-          <p className="text-[7px] font-mono text-zinc-600 text-center uppercase tracking-widest mt-3">Spike Labs Asset Engine</p>
+          <p className="text-[7px] font-mono text-zinc-600 text-center uppercase tracking-widest mt-3">
+            Spike Labs Asset Engine
+          </p>
         </div>
       </div>
 

@@ -35,6 +35,9 @@ importers:
       lucide-react:
         specifier: 0.344.0
         version: 0.344.0(react@19.2.4)
+      maath:
+        specifier: ^0.10.8
+        version: 0.10.8(@types/three@0.182.0)(three@0.182.0)
       react:
         specifier: ^19.2.4
         version: 19.2.4

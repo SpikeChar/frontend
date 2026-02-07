@@ -1,89 +1,116 @@
-import React, { useState, useRef, Suspense, useEffect } from 'react';
+import React, { useState, useRef, Suspense, useEffect, memo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { useGLTF, Stage, OrbitControls, ContactShadows } from '@react-three/drei';
-import { ChevronRight, RefreshCw, Hexagon, Palette, Component } from 'lucide-react';
+import { useGLTF, Stage, OrbitControls, ContactShadows, Environment, Center, Grid } from '@react-three/drei';
+import { ChevronRight, RefreshCw, Hexagon, Palette, Component, RotateCcw, Box } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useSettings } from '../Context/SettingsContext';
 import * as THREE from 'three';
-import { Ape } from '../Model/Ape';
 
-// --- 3D MODEL COMPONENT ---
-const ApeModel = ({ colors }: { colors: any }) => {
-  const { scene } = useGLTF('/ape.glb');
+const GLTFWithCustomizableParts = memo(
+    ({
+        scene,
+        config,
+        onCollectParts,
+        refGroup,
+    }: {
+        scene: THREE.Group;
+        config: Record<string, string>;
+        onCollectParts?: (names: string[]) => void;
+        refGroup?: React.RefObject<THREE.Group>;
+    }) => {
+        useEffect(() => {
+            if (!scene) return;
+            const names: string[] = [];
 
-  useEffect(() => {
-    scene.traverse((child: any) => {
-      if (child.isMesh && child.material) {
-        // 1. CLONE MATERIAL
-        // This makes sure each part of the ape can have its own color
-        if (!child.userData.isCloned) {
-          child.material = child.material.clone();
-          child.userData.isCloned = true;
-        }
+            // Traverse and apply color
+            scene.traverse((obj) => {
+                // @ts-ignore
+                if (obj.isMesh) {
+                    names.push(obj.name);
+                    // update mesh color if given in config
+                    if (
+                        config &&
+                        Object.prototype.hasOwnProperty.call(config, obj.name) &&
+                        obj.material &&
+                        obj.material.color
+                    ) {
+                        // @ts-ignore
+                        obj.material.color.set(config[obj.name]);
+                        // Ensure material updates in real time
+                        obj.material.needsUpdate = true;
+                    }
+                }
+            });
+            if (onCollectParts) onCollectParts(Array.from(new Set(names)));
+        }, [scene, config, onCollectParts]);
+        if (!scene) return null;
+        return <primitive object={scene} scale={0.5} ref={refGroup} />;
+    }
+);
 
-        const meshName = child.name.toLowerCase();
-        const matName = child.material.name.toLowerCase();
+GLTFWithCustomizableParts.displayName = "GLTFWithCustomizableParts";
 
-        // 2. TARGETING LOGIC
-        // We use keywords to find the right part of your specific GLB
-        
-        // APE SKIN (Body/Head/Hands)
-        if (meshName.includes('body') || meshName.includes('skin') || meshName.includes('ape') || 
-            matName.includes('body') || matName.includes('skin') || matName.includes('ape')) {
-          child.material.color.set(colors.body);
-        }
-
-        // GOGGLES / GLASSES
-        if (meshName.includes('goggle') || meshName.includes('glass') || meshName.includes('eye') || 
-            matName.includes('goggle') || matName.includes('glass') || matName.includes('eye')) {
-          child.material.color.set(colors.goggles);
-        }
-
-        // APPAREL (Shirt/Hoodie/Jackets)
-        if (meshName.includes('shirt') || meshName.includes('outfit') || meshName.includes('cloth') || meshName.includes('jacket') ||
-            matName.includes('shirt') || matName.includes('outfit') || matName.includes('cloth') || matName.includes('jacket')) {
-          child.material.color.set(colors.outfit);
-        }
-        
-        // Force the material to refresh in the GPU
-        child.material.needsUpdate = true;
-      }
-    });
-  }, [colors, scene]);
-
-  return <primitive object={scene} />;
-};
+const DEFAULT_PART_COLORS = ['#ffffff', '#3b82f6', '#ef4444', '#18181b', '#10b981', '#f59e0b', '#71717a', '#3f3f46'];
 
 // --- MAIN WORKSHOP COMPONENT ---
 const WorkshopDemo: React.FC = () => {
     const { playSound } = useSettings();
-    
-    // Initial state matching the "Original" look from your screenshot
-    const [config, setConfig] = useState({
-        body: '#ffffff',    // White allows the original orange texture to show
-        goggles: '#ffffff',
-        outfit: '#18181b',
-    });
 
-    const handleConfig = (key: string, val: string) => {
-        if (typeof playSound === 'function') {
-            playSound('click');
-        }
-        setConfig(prev => ({ ...prev, [key]: val }));
+    const { scene } = useGLTF("/models/Character2.glb");
+    const [availableParts, setAvailableParts] = useState<string[]>([]);
+    const [config, setConfig] = useState<Record<string, string>>({});
+    const [activePart, setActivePart] = useState<string | undefined>();
+    const apeRef = useRef<any>(null);
+
+    // Collect part names and set default config on initial load or when model changes
+    useEffect(() => {
+        if (!scene) return;
+        const partNames: Set<string> = new Set();
+        const initial: Record<string, string> = { ...(config || {}) };
+        scene.traverse((obj) => {
+            // @ts-ignore
+            if (obj.isMesh) {
+                partNames.add(obj.name);
+                if (!(obj.name in initial) && obj.material && obj.material.color) {
+                    // @ts-ignore
+                    initial[obj.name] = '#' + obj.material.color.getHexString();
+                }
+            }
+        });
+        setAvailableParts(Array.from(partNames));
+        setConfig((prev) => {
+            // Merge previous config (user changes) and initial config
+            return { ...initial, ...prev };
+        });
+        // Default active part
+        setActivePart((prev) => prev ?? Array.from(partNames)[0]);
+        // eslint-disable-next-line
+    }, [scene]);
+
+    // Color change + camera focus
+    const setSelection = (part: string, color?: string) => {
+        setActivePart(part);
+        if (color)
+            setConfig((prev) => ({
+                ...prev,
+                [part]: color,
+            }));
+    };
+    const handleReset = () => {
+        setConfig({});
     };
 
-    const colorPalette = ['#ffffff', '#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#18181b'];
 
     return (
         <section className="py-32 px-6 bg-voxel-950 border-y border-voxel-800 relative overflow-hidden">
             <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
 
             <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
-                
+
                 {/* Left Side: Info */}
                 <div className="w-full lg:w-1/3">
                     <span className="font-mono text-green-500 text-sm uppercase tracking-widest block mb-4">Interactive Workshop</span>
-                    <h2 className="font-display text-5xl font-bold mb-6 text-white">APE <br />CUSTOMIZER</h2>
+                    <h2 className="font-display text-5xl font-bold mb-6 text-white">SPIKE LABS <br />CUSTOMIZER</h2>
                     <p className="text-lg text-voxel-300 mb-8 leading-relaxed">
                         Modify textures and materials in real-time. This demo uses the Spike Engine to override baked GLB maps.
                     </p>
@@ -94,19 +121,50 @@ const WorkshopDemo: React.FC = () => {
 
                 {/* Right Side: 3D Canvas + Controls */}
                 <div className="w-full lg:w-2/3 bg-voxel-900 rounded-xl border border-voxel-800 p-2 shadow-2xl h-[600px] flex flex-col md:flex-row overflow-hidden">
-                    
+
                     {/* Viewport */}
                     <div className="relative flex-grow h-[350px] md:h-full bg-voxel-950">
-                        <Canvas dpr={[1, 2]} camera={{ position: [0, 0, 4], fov: 45 }}>
-                            <Suspense fallback={null}>
-                                <Stage intensity={0.6} environment="city" adjustCamera>
-                                    <Ape config={config} />
-                                </Stage>
-                                <OrbitControls makeDefault enableZoom={true} />
-                            </Suspense>
-                            <ContactShadows position={[0, -1.5, 0]} opacity={0.4} scale={10} blur={2.5} far={4} />
+                        <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 1, 5], fov: 30 }}>
+                            <color attach="background" args={['#050505']} />
+                            <Environment preset="studio" />
+                            <ambientLight intensity={0.4} />
+                            {/* Optional: CameraRig can be enabled for dynamic camera targeting parts */}
+                            {/* <CameraRig activePart={activePart} /> */}
+                            <Center>
+                                <group>
+                                    <GLTFWithCustomizableParts
+                                        scene={scene}
+                                        config={config}
+                                        onCollectParts={setAvailableParts}
+                                        refGroup={apeRef}
+                                    />
+                                </group>
+                            </Center>
+                            <Grid
+                                renderOrder={-1}
+                                position={[0, -0.8, 0]}
+                                infiniteGrid
+                                cellSize={0.6}
+                                cellThickness={1}
+                                cellColor={'#27272a'}
+                                sectionSize={2}
+                                sectionThickness={1}
+                                sectionColor={'#3f3f46'}
+                                fadeDistance={30}
+                            />
+
+                            <OrbitControls
+                                makeDefault
+                                enablePan={false}
+                                minDistance={1}
+                                maxDistance={8}
+                                enableDamping={true}
+                                dampingFactor={0.05}
+                            />
+
+                            <ContactShadows position={[0, -1.2, 0]} opacity={0.6} scale={20} blur={2.8} far={4.5} />
                         </Canvas>
-                        
+
                         <div className="absolute top-4 left-4 px-2 py-1 bg-black/40 backdrop-blur border border-white/10 text-[10px] font-mono text-voxel-400 rounded uppercase tracking-tighter">
                             RT_Customizer_v3.0
                         </div>
@@ -114,65 +172,67 @@ const WorkshopDemo: React.FC = () => {
 
                     {/* Controls Sidebar */}
                     <div className="w-full md:w-64 bg-voxel-900 border-l border-voxel-800 p-6 flex flex-col gap-8">
-                        
-                        {/* Body Selection */}
-                        <div>
-                            <label className="flex items-center gap-2 text-[10px] font-mono uppercase text-voxel-500 mb-3 tracking-widest">
-                                <Palette size={12} /> Ape Skin
-                            </label>
-                            <div className="flex gap-2 flex-wrap">
-                                {colorPalette.map(c => (
-                                    <button 
-                                        key={c} 
-                                        onClick={() => handleConfig('body', c)} 
-                                        className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${config.body === c ? 'border-white scale-110' : 'border-transparent'}`} 
-                                        style={{ backgroundColor: c }} 
-                                    />
-                                ))}
-                            </div>
+                        <div className="flex justify-between items-center mb-6 shrink-0">
+                            <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-600 font-bold">
+                                DNA Config
+                            </span>
+                            <button
+                                onClick={handleReset}
+                                className="p-1.5 hover:bg-white/5 rounded-full transition-colors group"
+                            >
+                                <RotateCcw size={12} className="text-zinc-600 group-hover:text-white transition-all duration-500" />
+                            </button>
                         </div>
 
-                        {/* Goggles Selection */}
-                        <div>
-                            <label className="flex items-center gap-2 text-[10px] font-mono uppercase text-voxel-500 mb-3 tracking-widest">
-                                <Hexagon size={12} /> Goggles
-                            </label>
-                            <div className="flex gap-2 flex-wrap">
-                                {colorPalette.map(c => (
-                                    <button 
-                                        key={c} 
-                                        onClick={() => handleConfig('goggles', c)} 
-                                        className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${config.goggles === c ? 'border-white scale-110' : 'border-transparent'}`} 
-                                        style={{ backgroundColor: c }} 
-                                    />
-                                ))}
-                            </div>
+                        <div className="flex-1 overflow-y-auto space-y-8 pr-1">
+                            {availableParts.map((part) => {
+                                const isActive = activePart === part;
+                                return (
+                                    <section
+                                        key={part}
+                                        onPointerDown={() => setActivePart(part)}
+                                        className={`p-2 rounded-xl transition-colors ${isActive ? 'bg-white/5' : ''}`}
+                                    >
+                                        <div className="flex items-center gap-2 mb-4 cursor-pointer">
+                                            <Box size={12} className={isActive ? 'text-white' : 'text-zinc-500'} />
+                                            <label
+                                                className={`text-[9px] font-mono uppercase tracking-[0.2em] cursor-pointer ${isActive ? 'text-white' : 'text-zinc-500'}`}
+                                            >
+                                                {part}
+                                            </label>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {/* {DEFAULT_PART_COLORS.map((color) => (
+                    <button
+                      key={color}
+                      onClick={() => setSelection(part, color)}
+                      className={`w-8 h-8 rounded-lg border-2 transition-all ${config[part] === color
+                        ? 'border-white scale-110'
+                        : 'border-white/5 opacity-40 hover:opacity-100'
+                      }`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))} */}
+                                            {isActive && (
+                                                <div className="mt-3 w-full flex items-center">
+                                                    {/* Color wheel (using input type color for simplicity) */}
+                                                    <input
+                                                        type="color"
+                                                        value={config[part] || "#ffffff"}
+                                                        onChange={(e) => setSelection(part, e.target.value)}
+                                                        className="w-12 h-12 p-0 border-0 bg-transparent cursor-pointer"
+                                                        aria-label="Custom color picker"
+                                                    />
+                                                    <span className="ml-2 text-xs text-zinc-400 font-mono uppercase">
+                                                        Pick Color
+                                                    </span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </section>
+                                )
+                            })}
                         </div>
-
-                        {/* Apparel Selection */}
-                        <div>
-                            <label className="flex items-center gap-2 text-[10px] font-mono uppercase text-voxel-500 mb-3 tracking-widest">
-                                <Component size={12} /> Apparel
-                            </label>
-                            <div className="flex gap-2 flex-wrap">
-                                {colorPalette.map(c => (
-                                    <button 
-                                        key={c} 
-                                        onClick={() => handleConfig('outfit', c)} 
-                                        className={`w-6 h-6 rounded-full border-2 transition-transform hover:scale-110 ${config.outfit === c ? 'border-white scale-110' : 'border-transparent'}`} 
-                                        style={{ backgroundColor: c }} 
-                                    />
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Reset Button */}
-                        <button 
-                            onClick={() => setConfig({body: '#ffffff', goggles: '#ffffff', outfit: '#18181b'})} 
-                            className="mt-auto flex items-center justify-center gap-2 py-3 text-xs font-mono uppercase tracking-widest text-voxel-500 hover:text-white border border-voxel-800 hover:border-voxel-600 transition-colors"
-                        >
-                            <RefreshCw size={14} /> Reset Model
-                        </button>
                     </div>
                 </div>
             </div>
