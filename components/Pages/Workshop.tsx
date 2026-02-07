@@ -143,7 +143,7 @@ const Workshop: React.FC = () => {
           <Environment preset="studio" />
           <ambientLight intensity={0.4} />
           {/* <Center> */}
-            <group position={[0,-1,0]}>
+            <group position={[0,0,0]}>
               <GLTFWithCustomizableParts
                 scene={scene}
                 config={config}
