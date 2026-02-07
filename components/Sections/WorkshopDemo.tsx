@@ -44,7 +44,7 @@ const GLTFWithCustomizableParts = memo(
             if (onCollectParts) onCollectParts(Array.from(new Set(names)));
         }, [scene, config, onCollectParts]);
         if (!scene) return null;
-        return <primitive object={scene} scale={0.5} ref={refGroup} />;
+        return <primitive object={scene} scale={1} ref={refGroup} />;
     }
 );
 
@@ -128,8 +128,7 @@ const WorkshopDemo: React.FC = () => {
                             <color attach="background" args={['#050505']} />
                             <Environment preset="studio" />
                             <ambientLight intensity={0.4} />
-                            {/* Optional: CameraRig can be enabled for dynamic camera targeting parts */}
-                            {/* <CameraRig activePart={activePart} /> */}
+ 
                             <Center>
                                 <group>
                                     <GLTFWithCustomizableParts
