@@ -237,7 +237,7 @@ const ModelSelectionModal: React.FC<ModelSelectionModalProps> = ({ onCancel, onS
 
   // Limit each category to show 1-2 models as preview
   const previewModelsByCategory = Object.entries(modelsByCategory).reduce((acc, [category, models]) => {
-    acc[category] = models.slice(0, 2); // Show first 1-2 models from each category
+    acc[category] = models.slice(0, 3); // Show first 1-2 models from each category
     return acc;
   }, {} as Record<string, ModelOption[]>);
 
@@ -957,14 +957,14 @@ const Workshop: React.FC = () => {
       )}
 
       {/* FOOTER STATUS */}
-      <div className="absolute bottom-6 left-6 right-80 flex items-center justify-between pointer-events-none z-10">
+      {/* <div className="absolute bottom-6 left-6 right-80 flex items-center justify-between pointer-events-none z-10">
         <div className="flex items-center gap-4 pointer-events-auto">
           <div className="flex items-center gap-2.5 px-3 py-1.5 bg-black/60 backdrop-blur border border-white/5 rounded-full">
             <div className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></div>
             <span className="text-[8px] font-mono uppercase tracking-[0.2em] text-zinc-400">Workspace Active</span>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
