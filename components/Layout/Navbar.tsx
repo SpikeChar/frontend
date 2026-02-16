@@ -133,7 +133,7 @@ const Navbar: React.FC = () => {
                         <div className="workspace-link flex items-center mr-4">
                             <Magnetic>
                                 <button 
-                                    onClick={() => handleNavClick('/workspace')}
+                                    onClick={() => handleNavClick('/workshop')}
                                     className="text-sm font-bold uppercase tracking-wider text-green-400 hover:text-green-300 transition-colors px-2 py-1 flex items-center gap-2 border border-green-500/20 rounded bg-green-500/5"
                                 >
                                     <Zap size={14} />

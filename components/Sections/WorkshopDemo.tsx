@@ -5,6 +5,7 @@ import { ChevronRight, RefreshCw, Hexagon, Palette, Component, RotateCcw, Box } 
 import { Link } from 'react-router-dom';
 import { useSettings } from '../Context/SettingsContext';
 import * as THREE from 'three';
+import { useAppKitAccount } from '@reown/appkit/react';
 
 const GLTFWithCustomizableParts = memo(
     ({
@@ -100,6 +101,8 @@ const WorkshopDemo: React.FC = () => {
         setConfig({});
     };
 
+    const { address, isConnected } = useAppKitAccount();
+
 
     return (
         <section className="py-32 px-6 bg-voxel-950 border-y border-voxel-800 relative overflow-hidden">
@@ -114,9 +117,10 @@ const WorkshopDemo: React.FC = () => {
                     <p className="text-lg text-voxel-300 mb-8 leading-relaxed">
                         Modify textures and materials in real-time. This demo uses the Spike Engine to override baked GLB maps.
                     </p>
-                    <Link to="/workshop" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-voxel-200 transition-all rounded-sm">
+                    {isConnected ? <Link to="/workshop" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-voxel-200 transition-all rounded-sm">
                         Launch Full Workshop <ChevronRight size={16} />
-                    </Link>
+                    </Link> : <Link to="/login" className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-bold uppercase tracking-widest hover:bg-voxel-200 transition-all rounded-sm">
+                    Launch Full Workshop <ChevronRight size={16} /></Link>}
                 </div>
 
                 {/* Right Side: 3D Canvas + Controls */}
@@ -155,8 +159,8 @@ const WorkshopDemo: React.FC = () => {
                             <OrbitControls
                                 makeDefault
                                 enablePan={false}
-                                minDistance={1}
-                                maxDistance={8}
+                                minDistance={5}
+                                maxDistance={5}
                                 enableDamping={true}
                                 dampingFactor={0.05}
                             />
