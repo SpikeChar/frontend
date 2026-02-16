@@ -66,8 +66,8 @@ const QUESTIONS: QuestionConfig[] = [
     title: 'What Brings You Here?',
     description: 'Ye sirf dummy questions hain – later yahi data AI ko jayega.',
     options: [
-      { value: 'Defi Game Dev', label: 'Defi Game Dev', hint: 'Player characters, NPCs, VTuber rigs' },
-      { value: 'Random Model', label: 'Random Model', hint: 'Pets, monsters, stylized animals' },
+      { value: 'Defi Game Dev', label: 'Defi Game Dev', hint: 'There are Some Prebuild Game Ready Models for Your Game.' },
+      { value: 'Random Model', label: 'Random Model', hint: 'You Can Make a Model using Images and Prompts.' },
       // { value: 'weapon-pack', label: 'Weapon / Prop Pack', hint: 'Swords, guns, melee kits' },
     ],
   },
@@ -76,16 +76,16 @@ const QUESTIONS: QuestionConfig[] = [
     title: 'Game Genre',
     description: 'Style pick karein jo aapke project ke mood ko match kare.',
     options: [
-      { value: 'Defi War', label: 'Defi War', hint: 'Cute, round, friendly' },
-      { value: 'Escape Game', label: 'Escape Game', hint: 'Sharp, dangerous, combat-heavy' },
-      { value: 'Battle Royale', label: 'Battle Royale', hint: 'Balanced, clean, flexible' },
+      { value: 'Defi War', label: 'Defi War', hint: 'Financial-themed combat, focus on liquid gold and neon charts.' },
+      { value: 'Escape Game', label: 'Escape Game', hint: 'Industrial, claustrophobic, high-tension mystery.' },
+      { value: 'Battle Royale', label: 'Battle Royale', hint: 'Modular, tactical, survivalist military gear.' },
       { value: 'Dungeon Siege', label: 'Dungeon Siege', hint: 'Balanced, clean, flexible' },
-      { value: 'Cyber Sport', label: 'Cyber Sport', hint: 'Balanced, clean, flexible' },
-      { value: 'Eco Utopia', label: 'Eco Utopia', hint: 'Balanced, clean, flexible' },
-      { value: 'Space Obyssey', label: 'Space Obyssey', hint: 'Balanced, clean, flexible' },
-      { value: 'Shadow Stealth', label: 'Shadow Stealth', hint: 'Balanced, clean, flexible' },
-      { value: 'Wild West', label: 'Wild West', hint: 'Balanced, clean, flexible' },
-      { value: 'Ancient Samurai', label: 'Ancient Samurai', hint: 'Balanced, clean, flexible' },
+      { value: 'Cyber Sport', label: 'Cyber Sport', hint: 'High-fantasy, stone-heavy, magical bioluminescence.' },
+      { value: 'Eco Utopia', label: 'Eco Utopia', hint: 'Solarpunk; focus on white marble and lush greenery.' },
+      { value: 'Space Obyssey', label: 'Space Obyssey', hint: 'Hard sci-fi; sleek ceramic, domed glass, and rovers.' },
+      { value: 'Shadow Stealth', label: 'Shadow Stealth', hint: 'Inky blacks, neon silhouettes, and rain-slicked textures.' },
+      { value: 'Wild West', label: 'Wild West', hint: 'Dusty leather, rustic wood, and sunset desert tones.' },
+      { value: 'Ancient Samurai', label: 'Ancient Samurai', hint: 'Feudal aesthetic; bamboo, silk, and ink-wash art.' },
     ],
   },
   {
@@ -93,11 +93,11 @@ const QUESTIONS: QuestionConfig[] = [
     title: 'Model Graphics',
     description: 'Isse hum guess karenge ki kaunsi category best fit hai.',
     options: [
-      { value: 'Voxel', label: 'Voxel', hint: 'Simple, friendly shapes' },
-      { value: 'Low Poly', label: 'Low Poly', hint: 'Flexible, reusable assets' },
-      { value: 'High Poly', label: 'High Poly', hint: 'Detail heavy, combat focused' },
-      { value: 'Cartoon', label: 'Cartoon', hint: 'Detail heavy, combat focused' },
-      { value: 'Clay Motion', label: 'Clay Motion', hint: 'Detail heavy, combat focused' },
+      { value: 'Voxel', label: 'Voxel', hint: '8-bit grid geometry (Minecraft/The Sandbox feel).' },
+      { value: 'Low Poly', label: 'Low Poly', hint: 'Flat-shaded triangles; sharp, clean edges.' },
+      { value: 'High Poly', label: 'High Poly', hint: 'Cinematic, realistic lighting and material depth.' },
+      { value: 'Cartoon', label: 'Cartoon', hint: 'Bold black outlines, flat anime colors (Anime feel).' },
+      { value: 'Clay Motion', label: 'Clay Motion', hint: 'Soft edges, fingerprints, "hand-sculpted" fingerprints.' },
     ],
   },
   {
@@ -818,7 +818,7 @@ const Workshop: React.FC = () => {
                 <color attach="background" args={['#050505']} />
                 <Environment preset="studio" />
                 {/* @ts-ignore */}
-                <ambientLight intensity={0.4} />
+                {/* <ambientLight intensity={0.4} />   */}
                 {/* <Center> */}
                 {/* @ts-ignore */}
                 {/* <PivotControls depthTest={false}> */}

@@ -35,7 +35,7 @@ const Testimonials: React.FC = () => {
     ];
 
     return (
-        <section id="testimonials" ref={sectionRef} className="py-24 px-6 bg-voxel-950 border-t border-voxel-800">
+        <section id="testimonials" ref={sectionRef} className="py-24 max-[599px]:py-10 px-6 bg-voxel-950 border-t border-voxel-800">
             <div className="max-w-4xl mx-auto text-center testimonial-fade">
                  <Swiper
                     modules={[Pagination, Autoplay]}
@@ -43,6 +43,7 @@ const Testimonials: React.FC = () => {
                     slidesPerView={1}
                     pagination={{ clickable: true }}
                     autoplay={{ delay: 5000 }}
+                    loop={true}
                     className="pb-12"
                  >
                     {reviews.map((review, i) => (

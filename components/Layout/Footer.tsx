@@ -41,9 +41,9 @@ const Footer: React.FC = () => {
   };
 
   return (
-    <footer ref={footerRef} className="bg-voxel-950 border-t border-voxel-800 pt-20 pb-10 px-6 opacity-0">
+    <footer ref={footerRef} className="bg-voxel-950 border-t border-voxel-800 pt-20 max-[599px]:py-10 pb-10 px-6 opacity-0">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-20 max-[599px]:mb-10">
           <div className="col-span-1 md:col-span-1">
             <Link to="/" className="font-display font-bold text-2xl tracking-tight block mb-6 text-white">SPIKE LABS</Link>
             <p className="text-voxel-400 text-sm leading-relaxed max-w-xs">
@@ -73,7 +73,7 @@ const Footer: React.FC = () => {
 
           <div>
             <h4 className="font-mono text-xs uppercase text-voxel-500 tracking-widest mb-6">Social</h4>
-            <div className="flex gap-4 mb-6">
+            <div className="flex gap-4 mb-6 max-[599px]:mb-0">
                 <a href="#" className="w-10 h-10 rounded-full border border-voxel-800 flex items-center justify-center text-voxel-400 hover:text-white hover:bg-voxel-800 transition-all">
                     <Twitter size={16} />
                 </a>
@@ -87,7 +87,7 @@ const Footer: React.FC = () => {
           </div>
         </div>
 
-        <div className="pt-8 border-t border-voxel-900 flex flex-col md:flex-row justify-between items-center text-xs text-voxel-600 font-mono uppercase tracking-wider">
+        <div className="pt-8 max-[599px]:pt-0 border-t border-voxel-900 flex flex-col md:flex-row justify-between items-center text-xs text-voxel-600 font-mono uppercase tracking-wider">
             <p>© 2025 SPIKELABS. All rights reserved.</p>
             <div className="flex gap-8 mt-4 md:mt-0">
                 <a href="#" className="hover:text-voxel-400">Privacy</a>

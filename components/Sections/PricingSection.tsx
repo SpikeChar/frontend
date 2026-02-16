@@ -45,14 +45,14 @@ const PricingSection: React.FC = () => {
     ];
 
     return (
-        <section id="pricing" ref={sectionRef} className="py-32 px-6 bg-voxel-950">
+        <section id="pricing" ref={sectionRef} className="py-32 max-[599px]:py-10 px-6 bg-voxel-950">
             <div className="max-w-7xl mx-auto">
-                 <div className="text-center mb-16 pricing-header">
+                 <div className="text-center max-[599px]:text-left mb-16 max-[599px]:mb-6 pricing-header">
                     <h2 className="font-display text-4xl font-bold mb-4">SIMPLE PRICING</h2>
                     <p className="text-voxel-400">Start for free, upgrade when you ship.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-[599px]:gap-4 max-w-5xl mx-auto">
                     {tiers.map((tier, i) => (
                         <div key={i} className={`pricing-card relative p-8 border flex flex-col ${tier.featured ? 'bg-voxel-900 border-white/20' : 'bg-voxel-950 border-voxel-800'}`}>
                             {tier.featured && <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white text-black px-4 py-1 text-[10px] font-bold uppercase tracking-widest rounded-full">Recommended</div>}

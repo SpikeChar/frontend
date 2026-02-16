@@ -38,19 +38,19 @@ const Specs: React.FC = () => {
     }, [motionEnabled]);
 
     return (
-        <section id="specs" ref={sectionRef} className="py-24 px-6 bg-voxel-950">
+        <section id="specs" ref={sectionRef} className="py-24 max-[599px]:py-10 px-6 bg-voxel-950">
             <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row justify-between items-end mb-16 border-b border-voxel-800 pb-8">
+                <div className="flex flex-col md:flex-row justify-between items-end max-[599px]:items-start mb-16 max-[599px]:mb-6 border-b border-voxel-800 pb-8">
                     <div>
                         <span className="font-mono text-voxel-500 text-sm tracking-widest uppercase block mb-2">Technical</span>
                         <h2 className="font-display text-4xl font-bold">SPECIFICATIONS</h2>
                     </div>
-                    <div className="mt-4 md:mt-0 text-voxel-400 font-mono text-xs uppercase">
+                    <div className="mt- md:mt-0 text-voxel-400 font-mono text-xs uppercase">
                         Spkie Labs v2.4
                     </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 max-[599px]:gap-4">
                     {specs.map((spec, idx) => {
                         const Icon = spec.icon;
                         return (

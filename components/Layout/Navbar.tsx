@@ -108,7 +108,7 @@ const Navbar: React.FC = () => {
     <>
         <nav 
             ref={navRef}
-            className="fixed top-0 left-0 w-full z-50 px-6 py-4 flex justify-between items-center border-b border-white/5 bg-voxel-950/80 backdrop-blur-md"
+            className="fixed top-0 left-0 w-full z-50 px-6 max-[599px]:pl-2 max-[599px]:pr-6 max-[599px]:py-2 py-4 flex justify-between items-center border-b border-white/5 bg-voxel-950/80 backdrop-blur-md"
         >
             <div className="w-full max-w-7xl mx-auto flex justify-between items-center">
                 <div className="flex items-center gap-8">

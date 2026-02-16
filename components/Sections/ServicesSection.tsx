@@ -10,14 +10,14 @@ const ServicesSection: React.FC = () => {
     ];
 
     return (
-        <section id="services" className="py-24 px-6 bg-voxel-900 border-y border-voxel-800">
+        <section id="services" className="py-24 max-[599px]:py-10 px-6 bg-voxel-900 border-y border-voxel-800">
             <div className="max-w-7xl mx-auto">
-                <div className="mb-16">
+                <div className="mb-16 max-[599px]:mb-6">
                     <h2 className="font-display text-3xl font-bold mb-4">STUDIO SERVICES</h2>
                     <p className="text-voxel-400">Beyond the tool. We help teams build worlds.</p>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-[599px]:gap-4">
                     {services.map((s, i) => {
                         const Icon = s.icon;
                         return (

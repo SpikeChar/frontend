@@ -29,7 +29,7 @@ const CTA: React.FC = () => {
     }, [motionEnabled]);
 
     return (
-        <section ref={containerRef} className="py-40 px-6 bg-voxel-950 border-t border-voxel-800 relative overflow-hidden">
+        <section ref={containerRef} className="py-40 max-[599px]:py-10 px-6 bg-voxel-950 border-t border-voxel-800 relative overflow-hidden">
             {/* Ambient Background */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-white/5 rounded-full blur-[120px] pointer-events-none"></div>
 

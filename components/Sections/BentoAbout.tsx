@@ -31,8 +31,8 @@ const BentoAbout: React.FC = () => {
     }, [motionEnabled]);
 
     return (
-        <section id="about" ref={containerRef} className="py-32 max-w-7xl mx-auto w-full flex flex-col items-start justify-center px-6 bg-voxel-950">
-                               <div className="mb-16">
+        <section id="about" ref={containerRef} className="py-32 max-[599px]:py-10 max-w-7xl mx-auto w-full flex flex-col items-start justify-center px-6 bg-voxel-950">
+                               <div className="mb-16 max-[599px]:mb-8">
                     <h2 className="font-display text-4xl md:text-5xl font-bold mb-4">THE CHARACTER ENGINE</h2>
                     <p className="text-voxel-400 max-w-2xl text-lg">
                         We build the tools that power the next generation of digital identity. 

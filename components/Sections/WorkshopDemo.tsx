@@ -105,10 +105,10 @@ const WorkshopDemo: React.FC = () => {
 
 
     return (
-        <section className="py-32 px-6 bg-voxel-950 border-y border-voxel-800 relative overflow-hidden">
+        <section className="py-32 max-[599px]:py-10 px-6 bg-voxel-950 border-y border-voxel-800 relative overflow-hidden">
             <div className="absolute inset-0 bg-grid-pattern opacity-5 pointer-events-none"></div>
 
-            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16">
+            <div className="max-w-7xl mx-auto flex flex-col lg:flex-row items-center gap-16 max-[599px]:gap-8">
 
                 {/* Left Side: Info */}
                 <div className="w-full lg:w-1/3">
@@ -174,7 +174,7 @@ const WorkshopDemo: React.FC = () => {
                     </div>
 
                     {/* Controls Sidebar */}
-                    <div className="w-full md:w-64 bg-voxel-900 border-l border-voxel-800 p-6 flex flex-col gap-8">
+                    <div className="w-full md:w-64 bg-voxel-900 border-l border-voxel-800 p-6 flex flex-col gap-8 max-[599px]:gap-0">
                         <div className="flex justify-between items-center mb-6 shrink-0">
                             <span className="text-[10px] font-mono uppercase tracking-[0.3em] text-zinc-600 font-bold">
                                 DNA Config

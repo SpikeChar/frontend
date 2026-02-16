@@ -43,14 +43,14 @@ const Process: React.FC = () => {
     ];
 
     return (
-        <section id="process" ref={sectionRef} className="py-32 px-6 bg-voxel-950 border-t border-voxel-800">
+        <section id="process" ref={sectionRef} className="py-32 max-[599px]:py-10 px-6 bg-voxel-950 border-t border-voxel-800">
             <div className="max-w-7xl mx-auto">
-                <div className="mb-20 text-center">
+                <div className="mb-20 max-[599px]:mb-6 text-center max-[599px]:text-left">
                     <span className="font-mono text-voxel-500 text-sm tracking-widest uppercase block mb-2">Workflow</span>
                     <h2 className="font-display text-4xl font-bold">FROM CONCEPT TO GAME</h2>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-[599px]:gap-4">
                     {steps.map((step, idx) => (
                         <div key={idx} className="process-step relative p-8 border-l border-voxel-800 hover:border-white transition-colors duration-500 pl-8">
                             <div className="font-mono text-xs text-voxel-500 mb-6">STEP {step.num}</div>
